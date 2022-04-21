@@ -8,6 +8,10 @@ importFrom(nlme,getVarCov)
 importFrom(nlme,Initialize)
 importFrom(nlme,varPower)
 importFrom(nlme,varWeights)
+importFrom("stats", "anova", "coef", "fitted", "formula",
+             "model.matrix", "pf", "predict", "qf", "rnorm", "runif",
+             "vcov")
+importFrom("utils", "example")
 S3method(logLik1,lme)
 S3method(print,Pwr)
 S3method(Pwr,lme)
