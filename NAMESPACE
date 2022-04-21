@@ -4,6 +4,10 @@ export(Pwr)
 export(runScript)
 export(sigma)
 export(simulateY)
+importFrom("stats", "anova", "coef", "fitted", "formula",
+           "model.matrix", "pf", "predict", "qf", "rnorm", "runif",
+           "vcov")
+importFrom("utils", "example")
 importFrom(nlme,getVarCov)
 importFrom(nlme,Initialize)
 importFrom(nlme,varPower)
