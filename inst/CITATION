@@ -9,7 +9,7 @@ citEntry(entry = "Book",
          address      = "New York",
          year         = 2013,
          note         = "ISBN 978-1-4614-3899-1",
-         url          = "http://www-personal.umich.edu/~agalecki",
+         url          = "http://www-personal.umich.edu/~agalecki/",
          
          textVersion = 
          paste("Andrzej Galecki & Tomasz Burzykowski (2013)", 

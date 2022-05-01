@@ -13,7 +13,7 @@
 }
 \author{
   \email{agalecki@umich.edu}, \email{Tomasz Burzykowski
-  <tomasz.burzykowski@uhasselt.be>}
+  <tomasz.burzykowski@hasselt.be>}
 }
 \keyword{package}
 
