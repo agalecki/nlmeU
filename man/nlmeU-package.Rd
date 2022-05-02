@@ -12,8 +12,7 @@
   Burzykowski book (2013). Package under development.
 }
 \author{
-  \email{agalecki@umich.edu}, \email{Tomasz Burzykowski
-  <tomasz.burzykowski@uhasselt.be>}
+  \email{agalecki@umich.edu}, \email{Tomasz Burzykowski tomasz.burzykowski@uhasselt.be}
 }
 \keyword{package}
 
