@@ -4,6 +4,7 @@ npg <- 20 # No of subjects per group
 subject <- 1:(2*npg) # Subjects' ids
 treat.f <- gl(2, npg, labels = c("Placebo", "Active"))
 dts <- data.frame(subject, treat.f) # Subject-level data
+
 dtL <-
   list(time = c(4, 12, 24, 52),
   subject = subject)
@@ -48,7 +49,7 @@ dif <- 10
 dim(dif) <- c(length(dif), 1)
 colnames(dif) <- "treat.fActive"
 dtF <- Pwr(fmA, sigma = sgma,
-    L = c("treat.fActive" = 1), altB = dif)
+           L = c("treat.fActive" = 1), altB = dif)
 dtF
 
 
