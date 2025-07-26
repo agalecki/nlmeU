@@ -1,0 +1,617 @@
+
+R version 4.5.1 (2025-06-13 ucrt) -- "Great Square Root"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> date()
+[1] "Fri Jul 25 18:19:53 2025"
+> packageVersion("nlmeU")
+[1] '0.75.0'
+> message("Code for first part of Chapter 17 (from Panel R17.1 til R17.13) is executed below.") 
+Code for first part of Chapter 17 (from Panel R17.1 til R17.13) is executed below.
+> message("Code for remaining panels pertaining to pdKronecker class is distributed with nlmeUpdK package (Jun.10, 2013)")
+Code for remaining panels pertaining to pdKronecker class is distributed with nlmeUpdK package (Jun.10, 2013)
+> 
+> ###################################################
+> ### code chunk: Chap17init
+> ###################################################
+> options(digits = 5, show.signif.stars = FALSE)
+> sessionInfo()
+R version 4.5.1 (2025-06-13 ucrt)
+Platform: x86_64-w64-mingw32/x64
+Running under: Windows 11 x64 (build 22631)
+
+Matrix products: default
+  LAPACK version 3.12.1
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+time zone: America/New_York
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+loaded via a namespace (and not attached):
+[1] compiler_4.5.1 nlme_3.1-166   grid_4.5.1     lattice_0.22-6
+> library(nlme)
+> library(lattice)
+> 
+> ###################################################
+> ### code chunk: R17.1a
+> ###################################################
+> data(prt, package = "nlmeU")
+> lme.spec.form1 <- 
++    formula(spec.fo ~ (prt.f + occ.f)^2 + sex.f + age.f + 
++              sex.f:age.f + bmi) 
+> prt1 <- subset(prt, fiber.f == "Type 1", select = -fiber.f)
+> fm17.1 <-                                        # M17.1 (17.1)
++    lme(lme.spec.form1,                    
++        random = ~occ.f - 1|id,                   # Random effects structure (including D)
++        data = prt1) 
+> 
+> 
+> ###################################################
+> ### code chunk: R17.1b
+> ###################################################
+> getGroupsFormula(fm17.1)
+~id
+<environment: 0x000001b6b9971928>
+> str(grpF <- getGroups(fm17.1))
+ Factor w/ 63 levels "5","10","15",..: 1 1 1 1 1 1 1 1 1 1 ...
+ - attr(*, "label")= chr "id"
+> nF1 <- xtabs(~grpF)       # Number of type-1 fibers per subject
+> range(nF1)                # Min, max number of type-1 fibers
+[1]  6 36
+> nF1[which.min(nF1)]       # Subject with the minimum number of fibers
+275 
+  6 
+> str(fm17.1$dims)          # Basic dimensions used in the fit
+List of 5
+ $ N    : int 1299
+ $ Q    : int 1
+ $ qvec : Named num [1:3] 2 0 0
+  ..- attr(*, "names")= chr [1:3] "id" "" ""
+ $ ngrps: Named int [1:3] 63 1 1
+  ..- attr(*, "names")= chr [1:3] "id" "X" "y"
+ $ ncol : Named num [1:3] 2 8 1
+  ..- attr(*, "names")= chr [1:3] "id" "" ""
+> 
+> 
+> ###################################################
+> ### code chunk: R17.2
+> ###################################################
+> fixed1 <- summary(fm17.1)$tTable           # beta, se(beta), t-test
+> nms <- rownames(fixed1)                    # beta names
+> nms[7:8] <- c("fLow:fPos", "fMale:fOld")   # Selected names shortened 
+> rownames(fixed1) <- nms                    # New names assigned
+> printCoefmat(fixed1, digits = 3,           # See also Table 17.1 
++              has.Pvalue = TRUE, P.values = TRUE)
+               Value Std.Error       DF t-value p-value
+(Intercept)  127.724    15.416 1234.000    8.28   3e-16
+prt.fLow       2.886     4.338   57.000    0.67   0.509
+occ.fPos       4.703     2.667 1234.000    1.76   0.078
+sex.fMale     -1.384     5.364   57.000   -0.26   0.797
+age.fOld       8.984     5.155   57.000    1.74   0.087
+bmi            0.491     0.578   57.000    0.85   0.399
+fLow:fPos     -2.133     3.750 1234.000   -0.57   0.570
+fMale:fOld   -12.680     7.553   57.000   -1.68   0.099
+> 
+> 
+> ###################################################
+> ### code chunk: R17.3a
+> ###################################################
+> getVarCov(fm17.1)             # D: (17.3)
+Random effects variance covariance matrix
+         occ.fPre occ.fPos
+occ.fPre   238.67   166.42
+occ.fPos   166.42   201.46
+  Standard Deviations: 15.449 14.194 
+> VarCorr(fm17.1)
+id = pdLogChol(occ.f - 1) 
+         Variance StdDev Corr   
+occ.fPre 238.67   15.449 occ.fPr
+occ.fPos 201.46   14.194 0.759  
+Residual 505.59   22.485        
+> 
+> 
+> ###################################################
+> ### code chunk: R17.3b
+> ###################################################
+> Ri <-                         # Ri is a list containing R_i ...
++   getVarCov(fm17.1, c("5", "275"),# ... for subjects "5" and "275". 
++             type = "conditional")
+> Ri$"275"                      # R_i for the subject "275" (17.2)
+       1      2      3      4      5      6
+1 505.59   0.00   0.00   0.00   0.00   0.00
+2   0.00 505.59   0.00   0.00   0.00   0.00
+3   0.00   0.00 505.59   0.00   0.00   0.00
+4   0.00   0.00   0.00 505.59   0.00   0.00
+5   0.00   0.00   0.00   0.00 505.59   0.00
+6   0.00   0.00   0.00   0.00   0.00 505.59
+> Ri.5   <- Ri$"5"              # R_i for the subject "5" ...
+> dim(Ri.5)                       # ... with large dimensions ...
+[1] 30 30
+> (Ri.5d <- diag(Ri.5)[1:6])      # ... its first 6 diagonal elements.
+     1      2      3      4      5      6 
+505.59 505.59 505.59 505.59 505.59 505.59 
+> sgma <- summary(fm17.1)$sigma # sigma          
+> sgma^2                        # sigma^2
+[1] 505.59
+> 
+> 
+> ###################################################
+> ### code chunk: R17.4a
+> ###################################################
+> dt5 <-                             # Data with 30 observations 
++    subset(prt1,               
++           select = c(id, occ.f),     # ... and 2 variables                    
++           id == "5")                 # ... for the subject "5".
+> auxF1 <- function(elv) {
++    idx <- 1:min(length(elv), 2)    # Up to two indices per vector 
++    elv[idx]                          # ... returned.
++ }
+> (i.u5 <-                           # Selected indices printed
++    unlist(
++       tapply(rownames(dt5),          # ... for the subject "5"
++              dt5$occ.f,              # ... by occ.f subgroups 
++              FUN = auxF1)))
+Pre1 Pre2 Pos1 Pos2 
+ "1"  "2" "20" "22" 
+> dt.u5  <- dt5[i.u5, ]              # Raw data for selected indices
+> (nms.u5 <-                         # Row names constructed
++    paste(i.u5, dt.u5$occ.f, sep = ".")) 
+[1] "1.Pre"  "2.Pre"  "20.Pos" "22.Pos"
+> 
+> 
+> ###################################################
+> ### code chunk: R17.4b
+> ###################################################
+> Vi <-                                # Vi is a list containing ...  
++   getVarCov(fm17.1, "5",               # ... matrix V_i for subject "5".
++             type = "marginal")
+> Vi.5 <- Vi$"5"                       # Vi.5 is a V_i matrix: (17.4)
+> Vi.u5 <- Vi.5[i.u5, i.u5]            # A sub-matrix selected, ...
+> rownames(Vi.u5) <- nms.u5              # ... row/column names changed,
+> Vi.u5                                  # ... the sub-matrix printed.
+            1      2     20     22
+1.Pre  744.26 238.67 166.42 166.42
+2.Pre  238.67 744.26 166.42 166.42
+20.Pos 166.42 166.42 707.05 201.46
+22.Pos 166.42 166.42 201.46 707.05
+> cov2cor(Vi.u5)                       # Corr(V_i) 
+             1       2      20      22
+1.Pre  1.00000 0.32068 0.22941 0.22941
+2.Pre  0.32068 1.00000 0.22941 0.22941
+20.Pos 0.22941 0.22941 1.00000 0.28493
+22.Pos 0.22941 0.22941 0.28493 1.00000
+> 
+> 
+> ###################################################
+> ### code chunk: R17.5
+> ###################################################
+> rnf <- ranef(fm17.1)         # b_i: (13.50)
+> (vrnf <- var(rnf))           # var(b_i). Compare to D in R17.13a.
+         occ.fPre occ.fPos
+occ.fPre   184.31   141.69
+occ.fPos   141.69   150.59
+> plot(rnf)                    # Side-by-side plot (Fig. 17.1a)
+> 
+> 
+> library(ellipse)
+
+Attaching package: 'ellipse'
+
+The following object is masked from 'package:graphics':
+
+    pairs
+
+> myPanel <- function(x,y, ...){
++   panel.grid(h = -1, v = -1)
++   panel.xyplot(x, y)
++   ex1 <-                     # Ellipse based on D: (17.3)
++      ellipse(getVarCov(fm17.1)) 
++   panel.xyplot(ex1[, 1], ex1[, 2], type = "l", lty = 1) 
++   ex2 <- ellipse(vrnf)       # Ellipse based on var(b_i). 
++   panel.xyplot(ex2[ ,1], ex2[, 2], type = "l", lty = 2)
++ }
+> 
+> 
+> xyplot(rnf[, 2] ~ rnf[, 1],  # Scatterplot b_i1 versus b_i0 (Fig. 17.1b) 
++        xlab = "Pre-intervention", 
++        ylab = "Post-intervention",
++        xlim = c(-40, 40), ylim = c(-40, 40), 
++        panel = myPanel)
+> 
+> 
+> ###################################################
+> ### code chunk: R17.6
+> ###################################################
+> prt1r <-                                     # Auxiliary data
++    within(prt1, 
++           {                                  # Pearson residuals                       
++             residP1 <- residuals(fm17.1, type = "p")  
++             fitted1 <- fitted(fm17.1)
++           })
+> range(prt1r$residP1)                    # Info for y-axis range
+[1] -2.8753  5.7108
+> xyplot(residP1 ~ fitted1| occ.f,   # Resids vs fitted (Fig. 17.2a)
++        data = prt1r, ylim = c(-6, 6), 
++        type = c("p", "smooth"),
++        grid = TRUE)
+> qqnorm(prt1r$residP1); qqline(prt1r$residP1) # Q-Q plot (Fig. 17.3a)
+> 
+> 
+> 
+> ###################################################
+> ### code chunk: R17.7
+> ###################################################
+> 
+> # fm17.2 <-                             #  M17.2 <- M17.1 ERROR No convergence
+> #   update(fm17.1,
+> #          weights = varPower(form = ~fitted(.)),
+> #          data = prt1) 
+> #intervals(fm17.2)$varStruct           # 95% CI for delta, (17.5)
+> #anova(fm17.1, fm17.2)                 # H0: delta = 0 (M17.1 nested in M17.2)
+> 
+> 
+> 
+> ###################################################
+> ### code chunk: R17.8a
+> ###################################################
+> lme.spec.form3 <- 
++    update(lme.spec.form1,                    # M17.3  <-  M17.1 
++           . ~ . + fiber.f + prt.f:fiber.f + occ.f:fiber.f)
+> fm17.3 <- 
++    lme(lme.spec.form3,                       # (17.6)
++        random = ~occ.f:fiber.f - 1|id,       # D(17.7)
++        data = prt) 
+> 
+> 
+> 
+> ###################################################
+> ### code chunk: R17.8b
+> ###################################################
+> fixed.D4 <- summary(fm17.3)$tTable         # beta, se(beta), t-test  
+> rnms <- rownames(fixed.D4)                 # beta names (not shown)
+> rnms[8:11] <-                              # Selected names shortened
++    c("Low:Pos", "Low:Type2", "Pos:Type2", "Male:Old") 
+> rownames(fixed.D4) <- rnms                 # Short names assigned
+> printCoefmat(fixed.D4, digits = 3, zap.ind = 5)  
+                 Value Std.Error       DF t-value p-value
+(Intercept)    129.612    14.288 2403.000    9.07  <2e-16
+prt.fLow         1.951     4.313   57.000    0.45   0.653
+occ.fPos         4.299     2.503 2403.000    1.72   0.086
+sex.fMale       -2.037     5.021   57.000   -0.41   0.687
+age.fOld         8.694     4.759   57.000    1.83   0.073
+bmi              0.399     0.532   57.000    0.75   0.457
+fiber.fType 2   25.302     2.404 2403.000   10.52  <2e-16
+Low:Pos         -1.134     3.408 2403.000   -0.33   0.739
+Low:Type2       -6.261     6.966   57.000   -0.90   0.373
+Pos:Type2       -4.078     2.912 2403.000   -1.40   0.162
+Male:Old         4.094     2.372 2403.000    1.73   0.085
+> 
+> 
+> ###################################################
+> ### code chunk: R17.9a
+> ###################################################
+> fm17.3cov <-                                   # D: (17.7) extracted
++    getVarCov(fm17.3, type = "random.effect") 
+> rownames(fm17.3cov)                            # Long names ...
+[1] "occ.fPre:fiber.fType 1" "occ.fPos:fiber.fType 1" "occ.fPre:fiber.fType 2"
+[4] "occ.fPos:fiber.fType 2"
+> nms. <- c("T1.Pre", "T1.Pos", "T2.Pre", "T2.Pos")# ... abbreviated
+> dimnames(fm17.3cov) <- list(nms., nms.)          # ... and reassigned.
+> fm17.3cov                                      # D: (17.7) printed
+Random effects variance covariance matrix
+       T1.Pre T1.Pos T2.Pre T2.Pos
+T1.Pre 248.80 175.34 212.50 155.40
+T1.Pos 175.34 184.61 109.99 172.97
+T2.Pre 212.50 109.99 241.62 133.74
+T2.Pos 155.40 172.97 133.74 247.03
+  Standard Deviations: 15.773 13.587 15.544 15.717 
+> fm17.3cor <- cov2cor(fm17.3cov)                # Corr(D) ...
+> print(fm17.3cor, digits = 2,                     # ...printed.
++       corr = TRUE, stdevs = FALSE)             
+Random effects correlation matrix
+       T1.Pre T1.Pos T2.Pre T2.Pos
+T1.Pre   1.00   0.82   0.87   0.63
+T1.Pos   0.82   1.00   0.52   0.81
+T2.Pre   0.87   0.52   1.00   0.55
+T2.Pos   0.63   0.81   0.55   1.00
+> 
+> 
+> ###################################################
+> ### code chunk: R17.9b
+> ###################################################
+> dim(R.5 <-                                     # Dims of R_i ...
++    getVarCov(fm17.3,                    
++              type = "conditional")[["5"]])        # ... for subject "5".
+[1] 41 41
+> diag(R.5)[1:6]                            # First 6 diagonal elements
+     1      2      3      4      5      6 
+599.14 599.14 599.14 599.14 599.14 599.14 
+> (sgma <- fm17.3$sigma)                         # sigma
+[1] 24.477
+> print(sgma^2)                                  # sigma^2
+[1] 599.14
+> 
+> 
+> ###################################################
+> ### code chunk: R17.10
+> ###################################################
+> CI <- intervals(fm17.3, which = "var-cov") # 95% CIs for theta_D
+> interv <- CI$reStruct$id                   
+> # rownames(interv)                         # Long names (not shown)
+> thDnms  <- 
++    c("sd(T1Pre)", "sd(T1Pos)", "sd(T2Pre)", "sd(T2Pos)",
++      "cor(T1Pre,T1Pos)", "cor(T1Pre,T2Pre)", "cor(T1Pre,T2Pos)", 
++                          "cor(T1Pos,T2Pre)", "cor(T1Pos,T2Pos)", 
++                                              "cor(T2Pre,T2Pos)")   
+> rownames(interv) <- thDnms                 # Short names assigned
+> interv                                     # CIs printed
+                    lower     est.    upper
+sd(T1Pre)        12.32871 15.77341 20.18058
+sd(T1Pos)        10.61844 13.58700 17.38547
+sd(T2Pre)        12.28705 15.54424 19.66488
+sd(T2Pos)        12.26967 15.71719 20.13339
+cor(T1Pre,T1Pos)  0.56003  0.81815  0.93149
+cor(T1Pre,T2Pre)  0.61557  0.86671  0.95804
+cor(T1Pre,T2Pos)  0.35224  0.62682  0.80205
+cor(T1Pos,T2Pre)  0.21356  0.52080  0.73430
+cor(T1Pos,T2Pos)  0.53527  0.80997  0.92973
+cor(T2Pre,T2Pos)  0.25011  0.54742  0.75039
+> 
+> ###################################################
+> ### code chunk: R17.11
+> ###################################################
+> residP3 <- residuals(fm17.3, type =  "p") # Pearson residuals 
+> xyplot(residP3 ~ fitted(fm17.3)|   # Scatterplots ...
++        fiber.f:occ.f,              # ...per type*occasion (Fig. 17.4)
++        data = prt,
++        type = c("p", "smooth"))
+> qqnorm(residP3); qqline(residP3)   # Q-Q plot (Fig. 17.5)
+> 
+> 
+> 
+> ###################################################
+> ### code chunk: R17.12a
+> ###################################################
+> Vx <-                                # Vx is a list ...
++    getVarCov(fm17.3, type = "marginal",                    
++              individual = "5")       # ... with one component.
+> Vmtx.5 <- Vx$"5"                     # Vmtx.5 is V_i matrix (17.8)...  
+> dim(Vmtx.5)                            # ... with large dimensions.
+[1] 41 41
+> dt5 <-                               # Data with 41 rows ...
++    subset(prt,                   
++           select = c(id, fiber.f, occ.f), # ... and 3 variables ...
++           id == "5")                   # ... for subject "5".
+> 
+> 
+> ###################################################
+> ### code chunk: R17.12b
+> ###################################################
+> (i.u5  <- unlist(                    # Selected indices printed.
++    tapply(rownames(dt5),             # Indices for subject "5" ...                       
++           list(dt5$fiber.f, dt5$occ.f), # ... by fiber.f and occ.f.
++           FUN = auxF1))) 
+[1] "1"  "2"  "3"  "5"  "20" "22" "21" "25"
+> dt.u5  <- dt5[i.u5, ]                # Raw data for selected indices
+> nms.u5 <- 
++    paste(format(i.u5, 2, justify = "right"),   
++          abbreviate(dt.u5$fiber.f, 2),     # Row names abbreviated 
++          dt.u5$occ.f, sep = ".") 
+> 
+> 
+> ###################################################
+> ### code chunk: R17.12c
+> ###################################################
+> Vmtx.u5 <- Vmtx.5[i.u5, i.u5]      # Submatrix of V_i for subject "5"
+> dimnames(Vmtx.u5) <- list(nms.u5, i.u5) # dimnames assigned
+> Cmtx.u5 <- cov2cor(Vmtx.u5)        # Submatrix of Corr(V_i)
+> uptri <- upper.tri(Cmtx.u5)        # Logical matrix
+> Vmtx.u5[uptri] <- Cmtx.u5[uptri]      
+> print(Vmtx.u5, digits = 2)         # Submatrix printed
+            1      2      3      5     20     22     21     25
+ 1.T1.Pre 848   0.29   0.25   0.25   0.22   0.22   0.18   0.18
+ 2.T1.Pre 249 847.94   0.25   0.25   0.22   0.22   0.18   0.18
+ 3.T2.Pre 213 212.50 840.76   0.29   0.14   0.14   0.16   0.16
+ 5.T2.Pre 213 212.50 241.62 840.76   0.14   0.14   0.16   0.16
+20.T1.Pos 175 175.34 109.99 109.99 783.74   0.24   0.21   0.21
+22.T1.Pos 175 175.34 109.99 109.99 184.61 783.74   0.21   0.21
+21.T2.Pos 155 155.40 133.74 133.74 172.97 172.97 846.17   0.29
+25.T2.Pos 155 155.40 133.74 133.74 172.97 172.97 247.03 846.17
+> 
+> 
+> ###################################################
+> ### code chunk: R17.13a
+> ###################################################
+> fm17.3a <- 
++    lme(lme.spec.form3,                     # M17.3a
++        random = ~1 + fiber.f + occ.f + fiber.f:occ.f|id,
++        data = prt) 
+> print(fm17.3a$sigma, digits = 4)           # sigma
+[1] 24.48
+> fm17.3acov <-                              # D
++    getVarCov(fm17.3a,                
++              type = "random.effect", individual = "5")
+> dimnames(fm17.3acov)[[1]]                  # Row/col D names ...
+[1] "(Intercept)"            "fiber.fType 2"          "occ.fPos"              
+[4] "fiber.fType 2:occ.fPos"
+> nms <- c("(Int)", "T2", "Pos", "T2:Pos")   # ... shortened
+> dimnames(fm17.3acov) <- list(nms,nms)      # ... and assigned.
+> print(fm17.3acov, digits = 4)              # D printed
+Random effects variance covariance matrix
+        (Int)     T2    Pos T2:Pos
+(Int)  248.80 -36.29 -73.45  16.35
+T2     -36.29  65.40 -29.07 -21.74
+Pos    -73.45 -29.07  82.70  37.34
+T2:Pos  16.35 -21.74  37.34  63.81
+  Standard Deviations: 15.77 8.087 9.094 7.988 
+> 
+> 
+> ###################################################
+> ### code chunk: R17.13b
+> ###################################################
+> td <-                                      # T_D: (17.12) created...
++    matrix(c(1, 0, 0, 0,                   
++             1, 0, 1, 0,                     
++             1, 1, 0, 0,
++             1, 1, 1, 1), 
++           nrow = 4, ncol = 4, byrow = TRUE)
+> mat.D4 <- td %*% fm17.3acov %*% t(td)          # ... and applied.
+> dimnames(mat.D4) <- list(nms., nms.)       # Row/col names shortened.
+> print(mat.D4, digits = 5)                  # D:(17.7); see R17.9.
+       T1.Pre T1.Pos T2.Pre T2.Pos
+T1.Pre 248.81 175.36 212.52 155.42
+T1.Pos 175.36 184.60 110.00 172.94
+T2.Pre 212.52 110.00 241.63 133.72
+T2.Pos 155.42 172.94 133.72 247.01
+> 
+> 
+> 
+> ###################################################
+> ### code chunk: fig 17.6 using splom() function
+> ###################################################
+> 
+> D173 <- getVarCov(fm17.3)
+> D173a <- getVarCov(fm17.3a)
+> nms    <- c("T1:Pre/(Int)","T2:Pre/T2","T1:Pos/Pos","T2:Pos/T2:Pos","fitName")
+> dtref1 <- within(ranef(fm17.3),  fitName <- "fm17.3")
+> names(dtref1)
+[1] "occ.fPre:fiber.fType 1" "occ.fPos:fiber.fType 1" "occ.fPre:fiber.fType 2"
+[4] "occ.fPos:fiber.fType 2" "fitName"               
+> names(dtref1) <- nms
+> dtref2 <- within(ranef(fm17.3a), fitName <- "fm17.3a")
+> names(dtref2)
+[1] "(Intercept)"            "fiber.fType 2"          "occ.fPos"              
+[4] "fiber.fType 2:occ.fPos" "fitName"               
+> names(dtref2) <- nms
+> dtref  <- rbind(dtref1, dtref2)
+> (lims <- range(dtref[,1:4]))
+[1] -29.202  31.061
+> lims <- c(-40,40)  # user-defined limits for every variable
+> atx <- -1
+> 
+> 
+> myFunL <- function(corx) ltext(-15, 25, substitute(paste(rho, corx), list(corx = corx)), cex = 0.9)
+> 
+> myFunU <- function(corx) ltext(-15, -32, substitute(paste(rho, corx), list(corx = corx)), cex = 0.9)
+> 
+> my.upperPanel <-  ## pairwise.complete.obs 
++   function(x, y, subscripts, ...){
++   vr <- dtref$fitName == "fm17.3a" 
++   subs <- subscripts[vr]         
++   x1 <- x[subs]
++   y1 <- y[subs]
++   panel.grid(h = atx, v = atx, col = "grey", ...)
++   panel.xyplot(x1, y1, ...)
++   corx <- round(cor(x1, y1, use = "complete.obs"), 2)
++   abs.corx <- abs(corx)
++   corx <- paste("=", corx, sep = "")
++   myFunU(corx)
++ }
+> 
+> my.lowerPanel <-  ## pairwise.complete.obs 
++   function(x, y, subscripts, ...){
++   vr <- dtref$fitName == "fm17.3" 
++   subs <- subscripts[vr]         
++   x1 <- x[subs]
++   y1 <- y[subs]
++   panel.grid(h=atx,v=atx, col="grey") ##  ...lty="13",...)
++   panel.xyplot(x1, y1, ...)
++   corx <- round(cor(x1, y1, use = "complete.obs"), 2)
++   abs.corx <- abs(corx)
++   corx <- paste("=", corx, sep = "")
++   print(corx)
++   cex.value <- 2
++   rx <- expression(paste(rho,corx))
++   myFunL(corx)
++ }
+> 
+> mySuperPanel <- function(z, subscripts, panel.subscripts,...){
++   panel.pairs(z, subscripts = subscripts,
++               panel.subscripts = panel.subscripts,
++               as.matrix = TRUE, 
++               upper.panel = "my.upperPanel",
++               lower.panel = "my.lowerPanel",
++               ## Possible to shorten syntax. See other splom figures
++               pscales =list(
++                 "T1:Pre/(Int)"  = list(limits = lims),
++                 "T2:Pre/T2"     = list(limits = lims),
++                 "T1:Pos/Pos"    = list(limits = lims),
++                 "T2:Pos/T2:Pos" = list(limits = lims)) )
++ print(names(z))
++ }
+> 
+> abbrev.names <- c("vis0", "vis4", "vis12", "vis24", "vis52")
+> 
+> splom.form <- formula(~as.matrix(dtref[,1:4])) 
+> splom(splom.form,
++   data = dtref, 
++   as.matrix = TRUE,  #### varnames = abbrev.names, 
++   xlab = "",
++   superpanel = mySuperPanel 
++ )
+[1] "=0.86"
+[1] "=0.92"
+[1] "=0.63"
+[1] "=0.72"
+[1] "=0.89"
+[1] "=0.61"
+[1] "T1:Pre/(Int)"  "T2:Pre/T2"     "T1:Pos/Pos"    "T2:Pos/T2:Pos"
+> 
+> sessionInfo()
+R version 4.5.1 (2025-06-13 ucrt)
+Platform: x86_64-w64-mingw32/x64
+Running under: Windows 11 x64 (build 22631)
+
+Matrix products: default
+  LAPACK version 3.12.1
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+time zone: America/New_York
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] ellipse_0.5.0  lattice_0.22-6 nlme_3.1-166  
+
+loaded via a namespace (and not attached):
+[1] compiler_4.5.1 tools_4.5.1    grid_4.5.1    
+> detach(package:nlme)
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  16.14    0.32   23.89 

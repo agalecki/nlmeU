@@ -2,43 +2,24 @@
 % Please edit documentation in R/nlmeU-package.R
 \docType{package}
 \name{nlmeU-package}
-\alias{nlmeU-package}
 \alias{nlmeU}
-\title{Datasets and Utility Functions Enhancing Functionality of 'nlme' Package}
-\source{
-\url{http://www-personal.umich.edu/~agalecki/}
-}
+\alias{nlmeU-package}
+\title{nlmeU: Datasets and Utility Functions Enhancing Functionality of 'nlme' Package}
 \description{
-nlmeU: Datasets and Utility Functions Enhancing Functionality of 'nlme' Package
+Provides functions and datasets to support the book by Galecki and Burzykowski (2013), 'Linear Mixed-Effects Models: A Step-by-Step Approach', Springer. Includes functions for power calculations, log-likelihood contributions, and data simulation for linear mixed-effects models.
 }
 \details{
-Datasets and utility functions enhancing functionality of the \code{nlme} package.
-Datasets, functions, and scripts are described in the book *Linear Mixed-Effects Models:
-A Step-by-Step Approach* by Galecki and Burzykowski (2013). The package is under development.
-
-Note: The \code{sigma} function in this package masks \code{stats::sigma}.
-Use \code{nlmeU::sigma} to access this package's version or \code{stats::sigma} for the stats package's version.
-
-
 This package provides datasets and utility functions to complement the \code{nlme} package,
-including functions like \code{\link{logLik1}}, \code{\link{Pwr}}, \code{\link{simulateY}},
-and \code{\link{sigma}}. It also includes datasets such as \code{\link{armd}},
-\code{\link{armd0}}, \code{\link{armd.wide}}, \code{\link{fcat}}, \code{\link{prt.fiber}},
-\code{\link{prt}}, \code{\link{prt.subjects}}, and \code{\link{SIIdata}}.
-}
-\examples{
-\dontrun{
-  library(nlmeU)
-  help(package = "nlmeU")
-}
-}
-\references{
-Galecki, A., & Burzykowski, T. (2013). *Linear Mixed-Effects Models: A Step-by-Step Approach*. Springer.
-}
-\seealso{
-\code{\link[nlme:nlme]{nlme}}
+including functions like \code{\link{logLik1}}, \code{\link{Pwr}}, and \code{\link{simulateY}}.
+It also includes datasets such as \code{\link{armd}}, \code{\link{armd0}}, \code{\link{armd.wide}},
+\code{\link{fcat}}, \code{\link{prt.fiber}}, \code{\link{prt}}, \code{\link{prt.subjects}}, and \code{\link{SIIdata}}.
 }
 \author{
-Andrzej Galecki \email{agalecki@umich.edu}, Tomasz Burzykowski \email{tomasz.burzykowski@uhasselt.be}
+\strong{Maintainer}: Andrzej Galecki \email{agalecki@umich.edu} (\href{https://orcid.org/0000-0003-3058-1312}{ORCID})
+
+Authors:
+\itemize{
+  \item Tomasz Burzykowski \email{tomasz.burzykowski@uhasselt.be} (\href{https://orcid.org/0000-0003-3378-975X}{ORCID})
 }
-\keyword{package}
+
+}

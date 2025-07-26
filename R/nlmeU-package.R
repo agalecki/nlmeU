@@ -1,34 +1,9 @@
 #' nlmeU: Datasets and Utility Functions Enhancing Functionality of 'nlme' Package
-#'
-#' Datasets and utility functions enhancing functionality of the \code{nlme} package.
-#' Datasets, functions, and scripts are described in the book *Linear Mixed-Effects Models:
-#' A Step-by-Step Approach* by Galecki and Burzykowski (2013). The package is under development.
-#'
-#' Note: The \code{sigma} function in this package masks \code{stats::sigma}.
-#' Use \code{nlmeU::sigma} to access this package's version or \code{stats::sigma} for the stats package's version.
-#'
-#' @name nlmeU-package
-#' @aliases nlmeU
-#' @title Datasets and Utility Functions Enhancing Functionality of 'nlme' Package
-#' @author Andrzej Galecki \email{agalecki@@umich.edu}, Tomasz Burzykowski \email{tomasz.burzykowski@@uhasselt.be}
-#' @importFrom nlme varPower Initialize varWeights getVarCov
-#' @examples
-#' \dontrun{
-#'   library(nlmeU)
-#'   help(package = "nlmeU")
-#' }
-#' @references
-#'   Galecki, A., & Burzykowski, T. (2013). *Linear Mixed-Effects Models: A Step-by-Step Approach*. Springer.
-#' @source
-#'   \url{http://www-personal.umich.edu/~agalecki/}
 #' @details
 #' This package provides datasets and utility functions to complement the \code{nlme} package,
-#' including functions like \code{\link{logLik1}}, \code{\link{Pwr}}, \code{\link{simulateY}},
-#' and \code{\link{sigma}}. It also includes datasets such as \code{\link{armd}},
-#' \code{\link{armd0}}, \code{\link{armd.wide}}, \code{\link{fcat}}, \code{\link{prt.fiber}},
-#' \code{\link{prt}}, \code{\link{prt.subjects}}, and \code{\link{SIIdata}}.
-#' @seealso \code{\link[nlme:nlme]{nlme}}
-#' @keywords package
+#' including functions like \code{\link{logLik1}}, \code{\link{Pwr}}, and \code{\link{simulateY}}.
+#' It also includes datasets such as \code{\link{armd}}, \code{\link{armd0}}, \code{\link{armd.wide}},
+#' \code{\link{fcat}}, \code{\link{prt.fiber}}, \code{\link{prt}}, \code{\link{prt.subjects}}, and \code{\link{SIIdata}}.
 "_PACKAGE"
 
 #' armd Data (867 x 8)
@@ -58,7 +33,8 @@
 #' @seealso \code{\link{armd0}}, \code{\link{armd.wide}}
 #' @keywords datasets
 #' @examples
-#' data(armd, package = "nlmeU")
+#' library(nlmeU)
+#' data(armd)
 #' summary(armd)
 #' @export
 armd <- NULL
