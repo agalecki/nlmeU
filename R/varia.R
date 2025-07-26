@@ -1,33 +1,36 @@
-## -> sigma generic function
-#' Extract scale parameter sigma from a model fit
-#'
-#' This function is generic; method functions can be written to handle specific classes of objects.
-#'
-#' @param object an object for which the scale parameter can be extracted.
-#' @param \dots some methods for this generic function may require additional arguments.
-#' @return Numeric scalar value representing the scale parameter.
-#' @author Andrzej Galecki and Tomasz Burzykowski
-#' @examples
-#' \dontrun{
-#'   library(nlme)
-#'   fm1 <- lme(distance ~ age, data = Orthodont)
-#'   sigma(fm1)
-#' }
-#' @export
-sigma <- function(object, ...) UseMethod("sigma")
+# Commented out nlmeU::sigma as it duplicates stats::sigma (2025-07-25)
+# #' Extract scale parameter sigma from a model fit
+# #' @param object an object from which the scale parameter sigma is to be extracted.
+# #' @param ... additional arguments passed to methods.
+# #' @return Numeric scalar representing the scale parameter sigma.
+# #' @examples
+# #' library(nlme)
+# #' fm1 <- lme(distance ~ age, data = Orthodont)
+# #' sigma(fm1)
+# #' @export
+# sigma <- function(object, ...) UseMethod("sigma")
+#
+# #' Default method for extracting scale parameter sigma
+# #' @param object an object from which the scale parameter sigma is to be extracted.
+# #' @param ... additional arguments (ignored).
+# #' @return Numeric scalar representing the scale parameter sigma, or NULL if not available.
+# #' @method sigma default
+# #' @export
+# sigma.default <- function(object, ...) object$sigma
 
-## -> sigma.default method
-#' Default method for extracting scale parameter sigma
-#'
-#' This is a method for the \code{\link{sigma}} generic function.
-#'
-#' @method sigma default
-#' @export
-#' @param object an object for which the scale parameter can be extracted.
-#' @param \dots additional arguments passed to the method.
-#' @return Numeric scalar value representing the scale parameter.
-#' @author Andrzej Galecki and Tomasz Burzykowski
-sigma.default <- function(object, ...) object$sigma
+
+# ## -> sigma.default method
+# #' Default method for extracting scale parameter sigma
+# #'
+# #' This is a method for the \code{\link{sigma}} generic function.
+# #'
+# #' @method sigma default
+# #' @export
+# #' @param object an object for which the scale parameter can be extracted.
+# #' @param \dots additional arguments passed to the method.
+# #' @return Numeric scalar value representing the scale parameter.
+# #' @author Andrzej Galecki and Tomasz Burzykowski
+# sigma.default <- function(object, ...) object$sigma
 
 ## -> missPat function
 #' Extract pattern of missing data

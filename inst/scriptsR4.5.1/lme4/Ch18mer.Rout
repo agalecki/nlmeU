@@ -1,0 +1,235 @@
+
+R version 4.5.1 (2025-06-13 ucrt) -- "Great Square Root"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> ###################################################
+> ### code chunk: Chap18mer
+> ###################################################
+> options(width = 65, digits = 5, show.signif.stars = FALSE)
+> date()
+[1] "Sat Jul 26 08:56:03 2025"
+> packageVersion("nlmeU")
+[1] '0.75.0'
+> packageVersion("lme4")
+[1] '1.1.37'
+> packageVersion("lattice")
+[1] '0.22.6'
+> 
+> sessionInfo()
+R version 4.5.1 (2025-06-13 ucrt)
+Platform: x86_64-w64-mingw32/x64
+Running under: Windows 11 x64 (build 22631)
+
+Matrix products: default
+  LAPACK version 3.12.1
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+time zone: America/New_York
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods  
+[7] base     
+
+loaded via a namespace (and not attached):
+[1] compiler_4.5.1
+>   
+> require(lattice) 
+Loading required package: lattice
+> 
+> data(SIIdata, package = "nlmeU")
+> 
+> 
+> ###################################################
+> ### code chunk number 5: R18.17
+> ###################################################
+> library(lme4)
+Loading required package: Matrix
+> fm18.6mer <-                                 
++    lmer(mathgain ~ ses + minority + poly(mathkind, 3) + ses:minority + 
++           (1|schoolid) + (1|schoolid:classid), # Syntax #1 (general)
++         data = SIIdata, REML = FALSE)
+> summ  <- summary(fm18.6mer)
+> print(summ, corr = FALSE)
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: 
+mathgain ~ ses + minority + poly(mathkind, 3) + ses:minority +  
+    (1 | schoolid) + (1 | schoolid:classid)
+   Data: SIIdata
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+  11347.8   11398.6   -5663.9   11327.8      1180 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-5.839 -0.635 -0.017  0.594  4.056 
+
+Random effects:
+ Groups           Name        Variance Std.Dev.
+ schoolid:classid (Intercept)  86.0     9.27   
+ schoolid         (Intercept)  66.8     8.17   
+ Residual                     690.9    26.28   
+Number of obs: 1190, groups:  
+schoolid:classid, 312; schoolid, 107
+
+Fixed effects:
+                     Estimate Std. Error t value
+(Intercept)             61.35       2.07   29.65
+ses                      8.84       1.94    4.55
+minorityMnrt=Yes        -6.86       2.28   -3.01
+poly(mathkind, 3)1    -660.46      30.99  -21.31
+poly(mathkind, 3)2     124.46      28.24    4.41
+poly(mathkind, 3)3    -178.34      27.97   -6.37
+ses:minorityMnrt=Yes    -5.82       2.44   -2.39
+> 
+> update(fm18.6mer, 
++        mathgain ~ ses + minority + poly(mathkind, 3) + ses:minority + 
++          (1|schoolid) + (1|classid))           # Syntax #2 
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: 
+mathgain ~ ses + minority + poly(mathkind, 3) + (1 | schoolid) +  
+    (1 | classid) + ses:minority
+   Data: SIIdata
+      AIC       BIC    logLik -2*log(L)  df.resid 
+  11347.8   11398.6   -5663.9   11327.8      1180 
+Random effects:
+ Groups   Name        Std.Dev.
+ classid  (Intercept)  9.27   
+ schoolid (Intercept)  8.17   
+ Residual             26.28   
+Number of obs: 1190, groups:  classid, 312; schoolid, 107
+Fixed Effects:
+         (Intercept)                   ses  
+               61.35                  8.84  
+    minorityMnrt=Yes    poly(mathkind, 3)1  
+               -6.86               -660.46  
+  poly(mathkind, 3)2    poly(mathkind, 3)3  
+              124.46               -178.34  
+ses:minorityMnrt=Yes  
+               -5.82  
+> 
+> update(fm18.6mer, 
++        mathgain ~ ses + minority + poly(mathkind, 3) + ses:minority + 
++          (1|schoolid/classid))                 # Syntax #3
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: 
+mathgain ~ ses + minority + poly(mathkind, 3) + (1 | schoolid/classid) +  
+    ses:minority
+   Data: SIIdata
+      AIC       BIC    logLik -2*log(L)  df.resid 
+  11347.8   11398.6   -5663.9   11327.8      1180 
+Random effects:
+ Groups           Name        Std.Dev.
+ classid:schoolid (Intercept)  9.27   
+ schoolid         (Intercept)  8.17   
+ Residual                     26.28   
+Number of obs: 1190, groups:  
+classid:schoolid, 312; schoolid, 107
+Fixed Effects:
+         (Intercept)                   ses  
+               61.35                  8.84  
+    minorityMnrt=Yes    poly(mathkind, 3)1  
+               -6.86               -660.46  
+  poly(mathkind, 3)2    poly(mathkind, 3)3  
+              124.46               -178.34  
+ses:minorityMnrt=Yes  
+               -5.82  
+> 
+> 
+> ###################################################
+> ### code chunk number 10: R18.18
+> ###################################################
+> anova(fm18.6mer)	                 # Approximate F-test statistics
+Analysis of Variance Table
+                  npar Sum Sq Mean Sq F value
+ses                  1    482     482    0.70
+minority             1      8       8    0.01
+poly(mathkind, 3)    3 368144  122715  177.62
+ses:minority         1   3938    3938    5.70
+> logLik(fm18.6mer)                  # ML value
+'log Lik.' -5663.9 (df=10)
+> unlist(VarCorr(fm18.6mer))         # d_1 and d_2
+schoolid:classid         schoolid 
+          85.990           66.757 
+> sigma(fm18.6mer)                   # sigma
+[1] 26.285
+> 
+> 
+> ###################################################
+> ### code chunk number 11: R18.19a.
+> ###################################################
+> rsd6 <- resid(fm18.6mer)
+> qqnorm(rsd6)            
+> 
+> 
+> ###################################################
+> ### code chunk number 12: R18.19b
+> ###################################################
+> rnf6mer <- ranef(fm18.6mer)          # Random effects
+> rnf6qn  <- plot(rnf6mer, grid = TRUE)# Q-Q plot for random effects
+> update(rnf6qn[["schoolid:classid"]], # For classid  (see Fig. 18.9a)
++        ylab = c("Random effects for classes")) 
+> update(rnf6qn[["schoolid"]],         # For schoolid (see Fig. 18.9b) 
++        ylab = c("Random effects for schools")) 
+> 
+> #### sessionInfo with packages attached 
+> sessionInfo() 
+R version 4.5.1 (2025-06-13 ucrt)
+Platform: x86_64-w64-mingw32/x64
+Running under: Windows 11 x64 (build 22631)
+
+Matrix products: default
+  LAPACK version 3.12.1
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+time zone: America/New_York
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods  
+[7] base     
+
+other attached packages:
+[1] lme4_1.1-37    Matrix_1.7-1   lattice_0.22-6
+
+loaded via a namespace (and not attached):
+ [1] minqa_1.2.8      MASS_7.3-61      compiler_4.5.1  
+ [4] reformulas_0.4.0 tools_4.5.1      Rcpp_1.1.0      
+ [7] splines_4.5.1    nlme_3.1-166     grid_4.5.1      
+[10] rbibutils_2.3    nloptr_2.1.1     boot_1.3-31     
+[13] Rdpack_2.6.2    
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+   0.96    0.20    1.61 

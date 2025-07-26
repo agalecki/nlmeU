@@ -1,5 +1,6 @@
 date()
-data(armd, package = "nlmeU")
+library(nlmeU)
+data(armd)
 library(nlme)
 lm3.form <- formula(visual ~ visual0 + time + treat.f)
 fm16.5ml <- lme(lm3.form, random = list(subject = pdDiag(~time)) ,
@@ -8,12 +9,12 @@ fm16.5ml <- lme(lm3.form, random = list(subject = pdDiag(~time)) ,
 
 
 df1 <- subset(armd, subject %in% "1") # Data for subject "1"
-detach(package:nlme)
+# detach(package:nlme)
 
-library(nlmeU)
+
 logLik1(fm16.5ml, df1)
 
 
 packageVersion("nlme")
 sessionInfo()
-detach(package:nlmeU)
+# detach(package:nlmeU)

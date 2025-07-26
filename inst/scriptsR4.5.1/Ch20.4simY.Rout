@@ -1,0 +1,149 @@
+
+R version 4.5.1 (2025-06-13 ucrt) -- "Great Square Root"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> ### Note: Simulations in Panel R20.11 take a long time
+> 
+> ###################################################
+> ### code chunk: Chap20.4init
+> ###################################################
+> options(width = 65, digits = 5, show.signif.stars = FALSE)
+> date()
+[1] "Fri Jul 25 17:12:09 2025"
+> 
+> sessionInfo()
+R version 4.5.1 (2025-06-13 ucrt)
+Platform: x86_64-w64-mingw32/x64
+Running under: Windows 11 x64 (build 22631)
+
+Matrix products: default
+  LAPACK version 3.12.1
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+time zone: America/New_York
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods  
+[7] base     
+
+loaded via a namespace (and not attached):
+[1] compiler_4.5.1 nlme_3.1-166   grid_4.5.1     lattice_0.22-6
+> 
+> require(nlme)    #
+Loading required package: nlme
+> 
+> data(armd, package="nlmeU")
+> 
+> lm3.form   <-                           # (12.9)
++      formula(visual ~ visual0 + time + treat.f) 
+> fm16.5  <-     #update(fm16.4,          # M16.5 <- M16.4           
++      lme (lm3.form, 
++      random = list(subject = pdDiag(~time)),
++      weights = varPower(form = ~time), # 
++      data = armd)            
+> fm16.5ml <- update(fm16.5, method = "ML")
+> 
+> 
+> ###################################################
+> ### code chunk: R20.11
+> ###################################################
+> library(nlmeU)
+
+Attaching package: 'nlmeU'
+
+The following objects are masked _by_ '.GlobalEnv':
+
+    armd, armd.wide, fcat, prt, prt.subjects, SIIdata
+
+> simY <- simulateY(fm16.5ml, nsim = 1000, seed = 1238917)  # Simulated y from M16.1
+> auxDt <- subset(armd,                    # Auxiliary data
++    select = c(subject, visual, visual0, time, treat.f))
+> simYsumm <- 
++    apply(simY, 
++          MARGIN = 2,                     # Over columns
++          FUN = function(y){    
++             auxDt$visual <- y            # Dependent variable updated
++             auxFit <-                    # Update M16.1 with new y
++                update(fm16.5ml, data = auxDt)
++             summ <- summary(auxFit)      # Summary
++             beta <- fixef(summ)     
++             list(beta = beta)
++ })
+> simYsumm[[1]]                            # beta for the 1st simulation
+$beta
+  (Intercept)       visual0          time treat.fActive 
+      4.59396       0.90295      -0.24768      -3.94995 
+
+> 
+> 
+> ###################################################
+> ### code chunk: R20.12
+> ###################################################
+> betaE <- sapply(simYsumm,            # Matrix with betas
++   FUN = function(x) x$beta)
+> rowMeans(betaE)                      # Empirical beta (see Panel R20.6b)
+  (Intercept)       visual0          time treat.fActive 
+      5.37646       0.90113      -0.24115      -2.66659 
+> cov(t(betaE))                        # Emoirical Var(beta)
+              (Intercept)     visual0        time treat.fActive
+(Intercept)     4.7447723 -7.5371e-02 -3.5957e-03   -0.64417529
+visual0        -0.0753712  1.3785e-03 -1.6726e-05    0.00072322
+time           -0.0035957 -1.6726e-05  5.5794e-04    0.00183248
+treat.fActive  -0.6441753  7.2322e-04  1.8325e-03    1.22061706
+> 
+> ## sessionInfo
+> sessionInfo()
+R version 4.5.1 (2025-06-13 ucrt)
+Platform: x86_64-w64-mingw32/x64
+Running under: Windows 11 x64 (build 22631)
+
+Matrix products: default
+  LAPACK version 3.12.1
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+time zone: America/New_York
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods  
+[7] base     
+
+other attached packages:
+[1] nlmeU_0.75-0 nlme_3.1-166
+
+loaded via a namespace (and not attached):
+[1] compiler_4.5.1 tools_4.5.1    grid_4.5.1     lattice_0.22-6
+> 
+> proc.time()
+   user  system elapsed 
+ 119.21   11.35  164.25 

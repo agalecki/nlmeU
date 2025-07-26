@@ -1,4 +1,4 @@
 nlmeU
 =====
 
-`library("devtools"); install_github("agalecki/nlmeU")`
+`devtools::install_github("agalecki/nlmeU")`

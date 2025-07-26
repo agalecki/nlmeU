@@ -36,7 +36,8 @@ an experimental treatment (interferon-alpha) versus placebo for patients
 diagnosed with ARMD.
 }
 \examples{
-data(armd, package = "nlmeU")
+library(nlmeU)
+data(armd)
 summary(armd)
 }
 \seealso{
