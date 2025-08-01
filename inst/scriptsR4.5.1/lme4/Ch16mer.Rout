@@ -27,7 +27,7 @@ Type 'q()' to quit R.
 >         
 > options(width=65, digits=5,show.signif.stars = FALSE) 
 > date()
-[1] "Sat Jul 26 08:55:50 2025"
+[1] "Thu Jul 31 21:02:57 2025"
 > packageVersion("nlmeU")
 [1] '0.75.0'
 > packageVersion("reshape")
@@ -59,7 +59,12 @@ attached base packages:
 [7] base     
 
 loaded via a namespace (and not attached):
-[1] compiler_4.5.1
+ [1] compiler_4.5.1   minqa_1.2.8      MASS_7.3-61     
+ [4] Matrix_1.7-1     reformulas_0.4.0 tools_4.5.1     
+ [7] Rcpp_1.1.0       splines_4.5.1    nlme_3.1-166    
+[10] grid_4.5.1       rbibutils_2.3    nloptr_2.1.1    
+[13] boot_1.3-31      lme4_1.1-37      Rdpack_2.6.2    
+[16] lattice_0.22-6  
 > 
 > 
 > data(armd, package = "nlmeU")
@@ -169,9 +174,332 @@ time:treat.f    1    163     163    2.18
 > ddf1 <- ddf[-1]                          # ddf for intercept omitted
 > within(dtaov,
 +       {
-+        `Pr(>F)` <- pf(`F value`, Df, ddf1, lower.tail = FALSE)
++        `Pr(>F)` <- pf(`F value`, npar, ddf1, lower.tail = FALSE)
 +        denDf <- ddf1
 +        })
-Error in eval(substitute(expr), e) : object 'Df' not found
-Calls: within -> within.data.frame -> eval -> eval -> pf
-Execution halted
+Analysis of Variance Table
+             npar Sum Sq Mean Sq F value denDf Pr(>F)
+visual0         1  25592   25592  343.82   231 <2e-16
+time            1  14626   14626  196.50   631 <2e-16
+treat.f         1    517     517    6.94   231  0.009
+time:treat.f    1    163     163    2.18   631  0.140
+> 
+> 
+> ###################################################
+> ### code chunk: R16.22a
+> ###################################################
+> SeedValue <- 17432157                 # Check it out
+> set.seed(SeedValue)
+> 
+> merObject <- fm16.1mer                      # M16.1 fit
+> simD1 <- simulate(merObject, nsim = 1000)   # Simulated y 
+> SimD1summ <- apply(simD1, 
++      2,                               # Over columns
++   function(y){
++     auxFit <- refit(merObject, y)     # Refit M16.1 with new y
++     summ <- summary(auxFit)           # Summary
++     beta <- coef(summ)[, "Estimate"]  # beta
++     Sx <- getME(auxFit, "theta")      # S element
++     sgma <- sigma(auxFit)     
++     list(beta = beta, ST = Sx, sigma = sgma)
++              })
+> 
+> 
+> 
+> ###################################################
+> ### code chunk: R16.22b
+> ###################################################
+> betaE  <-                          # Matrix with beta esimates
++    sapply(SimD1summ, FUN = function(x) x$beta)
+> STe <- sapply(SimD1summ, FUN = function(x) x$ST)
+> sigmaE <- sapply(SimD1summ, FUN = function(x) x$sigma)
+> 
+> 
+> ###################################################
+> ### code chunk: R16.23a
+> ###################################################
+> betaEm <- apply(betaE, 1, mean)         # Means (for each row)
+> betaEq <-                               # Quantiles
++     apply(betaE, 1,                        
++           FUN = function(x) quantile(x, c(0.5, 0.025, 0.975)))
+> ptE <-                                     # \zx!p?-values
++     apply(betaE, 1,                       
++           FUN = function(x){
++              prb <- mean(x > 0)
++              2 * pmax(0.5/ncol(betaE), pmin(prb, 1 - prb)) 
++                            })
+> cbind(betaEm, t(betaEq), ptE)         # Bind results columnwise 
+                      betaEm       50%     2.5%     97.5%   ptE
+(Intercept)         9.394801  9.492044  4.08913 14.660547 0.001
+visual0             0.825508  0.827323  0.74051  0.912948 0.001
+time               -0.213524 -0.213382 -0.26105 -0.168694 0.001
+treat.fActive      -2.452835 -2.424258 -5.26637  0.501722 0.110
+time:treat.fActive -0.048592 -0.049309 -0.11923  0.022706 0.144
+> 
+> 
+> ###################################################
+> ### code chunk: R16.23b
+> ###################################################
+> d11E <- STe * sigmaE
+> rndE <- rbind(d11E, sigmaE)                # Matrix with two rows
+> rndEm <- rowMeans(rndE)                    # Means (for each row)
+> rndEq <- apply(rndE, 1,                    # Quantiles
++    FUN = function(x) quantile(x, c(0.5, 0.025, 0.975)))
+> cbind(rndEm, t(rndEq))                     # Bind results 
+        rndEm    50%   2.5%   97.5%
+d11E   8.9627 8.9567 7.9279 10.0541
+sigmaE 8.6316 8.6265 8.1620  9.0935
+> 
+> 
+> ###################################################
+> ### code chunk: R16.24
+> ###################################################
+> names(sigmaE) <- names(STe) <- NULL          # For vectors
+> parSimD1  <-                                 # Matrix
++    rbind(betaE, ST1 = STe, sigma = sigmaE) 
+> parSimD1t <-                                 # Transposed 
++     data.frame(t(parSimD1), check.names=FALSE)
+> parSimD1s <-                                 # Subset
++     subset(parSimD1t, select = -`(Intercept)`) # Intercept omitted
+> require(reshape)                             # melt function needed
+Loading required package: reshape
+
+Attaching package: 'reshape'
+
+The following object is masked from 'package:Matrix':
+
+    expand
+
+> lattice::densityplot(~value | variable,               # Fig. 16.13
++             data = melt(parSimD1s),          # Molten data 
++             scales = list(relation = "free"), 
++             plot.points = FALSE) 
+Using  as id variables
+> detach(package:reshape)    
+> 
+> 
+> 
+> 
+> ###################################################
+> ### code chunk: R16.25a
+> ###################################################
+> lm2.form  <- visual ~ visual0 + time + treat.f + treat.f:time
+> vis.lm2 <- lm(lm2.form, data = armd)           # The null model
+> (RLRTstat <-                                   # Compare to R16.7
++    -2 * as.numeric(logLik(vis.lm2, REML=TRUE) 
++    - logLik(fm16.1mer)))        # log-REML for M16.1 (alternative)
+[1] 249.97
+> 0.5 * pchisq(RLRTstat, 1, lower.tail = FALSE)  # p-value
+[1] 1.3211e-56
+> 
+> 
+> ###################################################
+> ### code chunk: R16.25b
+> ###################################################
+> require(RLRsim)
+Loading required package: RLRsim
+> exactRLRT(fm16.1mer) # \ref{M:sec:ARMDLMM:Rint} (alternative)
+
+	simulated finite sample distribution of RLRT.
+	
+	(p-value based on 10000 simulated values)
+
+data:  
+RLRT = 250, p-value <2e-16
+
+> 
+> 
+> ###################################################
+> ### code chunk: R16.25c
+> ###################################################
+> SeedValue <- 1321719  # check it out!!
+> set.seed(SeedValue)
+> 
+> lm2sim <- simulate(vis.lm2, nsim = 100)  # y simulated from the null model 
+> 
+> RLRTstatSim <- apply(lm2sim, 
++   2,                                           # For each column
++   function(y){ 
++    dfAux  <- within(armd, visual <- y)         # Auxiliary data 
++    lm0    <- lm(formula(vis.lm2), data = dfAux)# The null model
++    llik0  <- as.numeric(logLik(lm0, REML=TRUE))# log-REML, the null
++    llikA  <- as.numeric(logLik(refit(fm16.1mer, y))) 
++    RLRTstat<- -2 * (llik0 - llikA)             # LR-test statistics              
++              })
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+> mean(RLRTstat <= RLRTstatSim)       # Empirical p-value
+[1] 0
+> 
+> 
+> ###################################################
+> ### code chunk: R16.26a
+> ###################################################
+> fm16.2mer  <-                        # M16.7
++    lmer(visual ~ visual0 + time + treat.f + treat.f:time +   
++            (1|subject) + (0 + time|subject),         
++         data = armd)
+Warning message:
+In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.104158 (tol = 0.002, component 1)
+> summ <- summary(fm16.2mer)
+> coef(summ)                                     # t-Table
+                    Estimate Std. Error t value
+(Intercept)         5.351707   2.328149  2.2987
+visual0             0.898411   0.039241 22.8947
+time               -0.215361   0.032271 -6.6735
+treat.fActive      -2.313845   1.207773 -1.9158
+time:treat.fActive -0.055073   0.047098 -1.1693
+> unlist(VarCorr(fm16.2mer))           # D. Short printout
+  subject subject.1 
+53.730770  0.079309 
+> sigma(fm16.2mer)                     # sigma 
+[1] 6.6901
+> 
+> 
+> ###################################################
+> ### code chunk: R16.26b
+> ###################################################
+> fm16.2aux  <-                                  # Model M16.7 with ...
++    update(fm16.2mer, . ~ . - treat.f:time)     #...interaction omitted
+Warning message:
+In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.123227 (tol = 0.002, component 1)
+> anova(fm16.2aux, fm16.2mer)
+refitting model(s) with ML (instead of REML)
+Data: armd
+Models:
+fm16.2aux: visual ~ visual0 + time + treat.f + (1 | subject) + (0 + time | subject)
+fm16.2mer: visual ~ visual0 + time + treat.f + treat.f:time + (1 | subject) + (0 + time | subject)
+          npar  AIC  BIC logLik -2*log(L) Chisq Df Pr(>Chisq)
+fm16.2aux    7 6441 6474  -3213      6427                    
+fm16.2mer    8 6441 6480  -3213      6425  1.38  1       0.24
+> 
+> 
+> 
+> ###################################################
+> ### code chunk: R16.27a
+> ###################################################
+> RML0 <- logLik(fm16.1mer)            # log-REML, M16.1 (null)
+> RMLa <- logLik(fm16.2mer)            # log-REML, M16.7 (alternative)
+> (RLRTstat <- -2 * as.numeric(RML0 - RMLa))  
+[1] 140.83
+> .5 * pchisq(RLRTstat, 1, lower.tail = FALSE) +    # \zx{p}-value
++   .5 * pchisq(RLRTstat, 2, lower.tail = FALSE)     
+[1] 1.399e-31
+> 
+> 
+> ###################################################
+> ### code chunk: R16.27b
+> ###################################################
+> require(RLRsim)
+> mAux  <- lmer(visual ~               # Auxiliary model with ...
++            visual0 + time + treat.f + treat.f:time +  
++            (0 + time| subject),        # ... random slopes only. 
++          data = armd)          
+> exactRLRT(m = mAux,                  # The auxiliary model
++           m0= fm16.1mer,             # M16.1 (null)
++           mA= fm16.2mer)             # M16.7 (alternative)
+
+	simulated finite sample distribution of RLRT.
+	
+	(p-value based on 10000 simulated values)
+
+data:  
+RLRT = 141, p-value <2e-16
+
+> 
+> #### sessionInfo ###
+> 
+> sessionInfo()           # with packages attached
+R version 4.5.1 (2025-06-13 ucrt)
+Platform: x86_64-w64-mingw32/x64
+Running under: Windows 11 x64 (build 22631)
+
+Matrix products: default
+  LAPACK version 3.12.1
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+time zone: America/New_York
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods  
+[7] base     
+
+other attached packages:
+[1] RLRsim_3.1-8 lme4_1.1-37  Matrix_1.7-1
+
+loaded via a namespace (and not attached):
+ [1] mgcv_1.9-1       lattice_0.22-6   splines_4.5.1   
+ [4] Rdpack_2.6.2     nloptr_2.1.1     grid_4.5.1      
+ [7] reshape_0.8.9    reformulas_0.4.0 compiler_4.5.1  
+[10] plyr_1.8.9       boot_1.3-31      rbibutils_2.3   
+[13] tools_4.5.1      nlme_3.1-166     minqa_1.2.8     
+[16] Rcpp_1.1.0       MASS_7.3-61     
+> 
+> detach(package:lme4)
+> detach(package:RLRsim)
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  21.81    0.54   25.23 

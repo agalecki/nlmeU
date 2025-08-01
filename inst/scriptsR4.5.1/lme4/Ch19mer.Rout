@@ -327,7 +327,7 @@ The following object is masked from 'package:nlme':
 +     data=fcat)
 + )
    user  system elapsed 
-   0.05    0.04    0.11 
+   0.09    0.00    0.09 
 > fm19.2mer                                           # M19.2: (19.2)
 Linear mixed model fit by REML ['lmerMod']
 Formula: scorec ~ (1 | target) + (1 | id)
@@ -383,10 +383,111 @@ $id
 > plx[2]                          # Fig. 19.1b  
 $target
 
-> plot(coef(fm19.2mer))           # Fig. 19.2
-Error in seq_len(nrow(form$right)) : 
-  argument must be coercible to non-negative integer
-Calls: plot ... plot.ranef.mer -> lapply -> FUN -> splom -> splom.formula
-In addition: Warning message:
-In seq_len(nrow(form$right)) : first element used of 'length.out' argument
-Execution halted
+> # plot(coef(fm19.2mer))         # Fig. 19.2 (does not work)
+> 
+> ###################################################
+> ### code chunk: R19.6a
+> ###################################################
+> dpx <- dotplot(rnf)
+> # dpx[1]                      # Dotplot for id (not shown)
+> dpx[2]                        # Fig. 19.3a
+$target
+
+> 
+> 
+> ###################################################
+> ### code chunk: R19.6b
+> ###################################################
+> rnf.pVar <- ranef(fm19.2mer, condVar = TRUE) # ranef.mer-class object
+> dpx.pVar <- dotplot(rnf.pVar)
+> # dpx.pVar[1]                 # Dotplot for id (not shown)
+> dpx.pVar[2]                   # Fig. 19.3b
+$target
+
+> 
+> 
+> 
+> 
+> ###################################################
+> ### code chunk: R19.7a
+> ###################################################
+> (eVCorr <-  sapply(rnf, var))
+     id  target 
+0.56346 1.61326 
+> VCorr                           
+     id  target 
+0.68637 1.61577 
+> all(eVCorr < VCorr)
+[1] TRUE
+> 
+> 
+> ###################################################
+> ### code chunk: R19.7b
+> ###################################################
+> rnf.id    <- rnf$id               # Data frame with b_1,S
+> arnf.id   <- abs(rnf.id)          # abs(b_1,S)
+> afxd.id   <- abs(fxd.id)          # abs(beta_1,S)    
+> range(afxd.id - arnf.id)
+[1] 0.002584 0.480100
+> 
+> 
+> ###################################################
+> ### code chunk: R19.7c
+> ###################################################
+> rnf.trgt  <- rnf$target
+> arnf.trgt <- abs(rnf.trgt) 
+> afxd.trgt <- abs(fxd.trgt)
+> range(afxd.trgt - arnf.trgt)
+[1] 0.00029839 0.00319883
+> 
+> 
+> ###################################################
+> ### code chunk: R19.7d
+> ###################################################
+> names(dt  <- data.frame(afxd.id, arnf.id))
+[1] "afxd.id"      "X.Intercept."
+> names(dt)[2] <- "arnf.id"
+> 
+> myPanel <- function(x, y, ...){
++   panel.grid(h = -1, v = -1)
++   panel.lines(c(0, 3), c(0, 3), lty = 2)
++   panel.xyplot(x, y, ...)
++ }
+> 
+> xyplot(arnf.id ~ afxd.id,         # Fig. 19.4a
++        data = dt, panel = myPanel)
+> 
+> sessionInfo()
+R version 4.5.1 (2025-06-13 ucrt)
+Platform: x86_64-w64-mingw32/x64
+Running under: Windows 11 x64 (build 22631)
+
+Matrix products: default
+  LAPACK version 3.12.1
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+time zone: America/New_York
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] lme4_1.1-37    Matrix_1.7-1   lattice_0.22-6 nlme_3.1-166  
+
+loaded via a namespace (and not attached):
+ [1] compiler_4.5.1   minqa_1.2.8      MASS_7.3-61      reformulas_0.4.0
+ [5] tools_4.5.1      Rcpp_1.1.0       splines_4.5.1    grid_4.5.1      
+ [9] rbibutils_2.3    nloptr_2.1.1     boot_1.3-31      Rdpack_2.6.2    
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+   2.23    0.23    2.96 

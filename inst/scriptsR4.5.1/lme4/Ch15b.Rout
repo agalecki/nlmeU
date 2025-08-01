@@ -28,7 +28,7 @@ Type 'q()' to quit R.
 > ###################################################
 > options(width=65, digits=5, show.signif.stars = FALSE) 
 > date()
-[1] "Sat Jul 26 09:16:56 2025"
+[1] "Thu Jul 31 16:15:26 2025"
 > packageVersion("lme4")
 [1] '1.1.37'
 > packageVersion("Matrix")
@@ -121,6 +121,11 @@ Number of obs: 6, groups:  g2, 3; g1, 2
 Fixed effects:
             Estimate Std. Error t value
 (Intercept)   11.155      0.961    11.6
+> print(VarCorr(fmc))
+ Groups   Name        Std.Dev.
+ g2       (Intercept) 1.334   
+ g1       (Intercept) 0.803   
+ Residual             0.217   
 > gf <- getME(fmc, "flist")     # Grouping factors
 > xtabs(~g1 + g2, gf)           # g1 and g2 fuly crossed 
    g2
@@ -141,10 +146,125 @@ B . . . 1 1 1
 > ###################################################
 > ### code chunk: R15.6
 > ###################################################
-> # STs <- expand(fmc)       # Expand the ST slot (does not work in lme4)
-> Sts <- VarCorr(fmc)
-> summary(STs)
-Error in h(simpleError(msg, call)) : 
-  error in evaluating the argument 'object' in selecting a method for function 'summary': object 'STs' not found
-Calls: summary -> .handleSimpleError -> h
-Execution halted
+> (S <- getME(fmc, "Lambdat"))                      # Diagonal scale-matrix 
+5 x 5 sparse Matrix of class "dgCMatrix"
+                                       
+[1,] 6.1439 .      .      .      .     
+[2,] .      6.1439 .      .      .     
+[3,] .      .      6.1439 .      .     
+[4,] .      .      .      3.6959 .     
+[5,] .      .      .      .      3.6959
+> (T <- Diagonal(n = nrow(getME(fmc, "Lambdat"))))  # Unit diagonal matrix T      
+5 x 5 diagonal matrix of class "ddiMatrix"
+     [,1] [,2] [,3] [,4] [,5]
+[1,]    1    .    .    .    .
+[2,]    .    1    .    .    .
+[3,]    .    .    1    .    .
+[4,]    .    .    .    1    .
+[5,]    .    .    .    .    1
+> # T <- Cholesky(S, super = FALSE, perm = FALSE)   # General syntax will work for non-diagonal matrix S
+> Ls <- getME(fmc, "L")              # Cholesky factor L_Z (13.38)
+> as(Ls, "sparseMatrix")
+5 x 5 sparse Matrix of class "dtCMatrix"
+                                        
+[1,] 8.7461 .      .       .      .     
+[2,] .      8.7461 .       .      .     
+[3,] .      .      8.7461  .      .     
+[4,] 2.5962 2.5962 2.5962  4.6645 .     
+[5,] 2.5962 2.5962 2.5962 -4.3352 1.7213
+> perm <- Ls@perm
+> # Convert to 1-based indices
+> perm_1based <- perm + 1
+> # Create permutation matrix P
+> n <- length(perm)
+> P <- Matrix(0, n, n)
+> P[cbind(1:n, perm_1based)] <- 1
+> P <- as(P, "pMatrix")                             # Permutation matrix
+> print(P)
+5 x 5 sparse Matrix of class "pMatrix"
+              
+[1,] . . | . .
+[2,] | . . . .
+[3,] . | . . .
+[4,] . . . | .
+[5,] . . . . |
+> 
+> 
+> ###################################################
+> ### code chunk: R15.7
+> ###################################################
+> TS <- T %*% S                      # Product of T and S
+> (sig <- sigma(fmc))                # sigma 
+[1] 0.2172
+> (D <- sig * sig * tcrossprod(TS))  # D = sigma^2 TSST'13.9), (13.33)
+5 x 5 sparse Matrix of class "dsCMatrix"
+                                         
+[1,] 1.7807 .      .      .       .      
+[2,] .      1.7807 .      .       .      
+[3,] .      .      1.7807 .       .      
+[4,] .      .      .      0.64439 .      
+[5,] .      .      .      .       0.64439
+> A  <- getME(fmc, "A")              # A matrix (related to Z * Lambda)
+> ZTS <- t(Zt) %*% TS                # Z*T*S
+> (max(abs(t(A) - ZTS )))            # verify A' = Z*T*S : (13.34)
+[1] 0
+> Ac <- tcrossprod(A)                # A*A'
+> (AcI <- Ac + diag(1, nrow(A)))     # A*A' + I
+5 x 5 sparse Matrix of class "dsCMatrix"
+                                       
+[1,] 76.494  .      .     22.707 22.707
+[2,]  .     76.494  .     22.707 22.707
+[3,]  .      .     76.494 22.707 22.707
+[4,] 22.707 22.707 22.707 41.978  .    
+[5,] 22.707 22.707 22.707  .     41.978
+> PP <- P %*% AcI %*% t(P)           # P*(A*A' + I)*P'
+> L <- as(Ls, "sparseMatrix")
+> print(L)
+5 x 5 sparse Matrix of class "dtCMatrix"
+                                        
+[1,] 8.7461 .      .       .      .     
+[2,] .      8.7461 .       .      .     
+[3,] .      .      8.7461  .      .     
+[4,] 2.5962 2.5962 2.5962  4.6645 .     
+[5,] 2.5962 2.5962 2.5962 -4.3352 1.7213
+> max(abs(tcrossprod(L) - PP))       # L_Z*L_Z' = P*(A*A' + I)*P': (13.38)  
+[1] 1.4211e-14
+> 
+> ### sessionInfo
+> sessionInfo()                      # Before detaching packages
+R version 4.5.1 (2025-06-13 ucrt)
+Platform: x86_64-w64-mingw32/x64
+Running under: Windows 11 x64 (build 22631)
+
+Matrix products: default
+  LAPACK version 3.12.1
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+time zone: America/New_York
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods  
+[7] base     
+
+other attached packages:
+[1] lme4_1.1-37  Matrix_1.7-1
+
+loaded via a namespace (and not attached):
+ [1] compiler_4.5.1   minqa_1.2.8      MASS_7.3-61     
+ [4] reformulas_0.4.0 tools_4.5.1      Rcpp_1.1.0      
+ [7] splines_4.5.1    nlme_3.1-166     grid_4.5.1      
+[10] rbibutils_2.3    nloptr_2.1.1     boot_1.3-31     
+[13] Rdpack_2.6.2     lattice_0.22-6  
+> detach(package:lme4) 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+   1.00    0.17    1.51 

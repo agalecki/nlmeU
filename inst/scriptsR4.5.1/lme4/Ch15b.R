@@ -53,6 +53,8 @@ xtabs(~g1 + g2, gf)           # g1 and g2 fuly crossed
 (S <- getME(fmc, "Lambdat"))                      # Diagonal scale-matrix 
 (T <- Diagonal(n = nrow(getME(fmc, "Lambdat"))))  # Unit diagonal matrix T      
 # T <- Cholesky(S, super = FALSE, perm = FALSE)   # General syntax will work for non-diagonal matrix S
+Ls <- getME(fmc, "L")              # Cholesky factor L_Z (13.38)
+as(Ls, "sparseMatrix")
 perm <- Ls@perm
 # Convert to 1-based indices
 perm_1based <- perm + 1
@@ -75,8 +77,6 @@ ZTS <- t(Zt) %*% TS                # Z*T*S
 (max(abs(t(A) - ZTS )))            # verify A' = Z*T*S : (13.34)
 Ac <- tcrossprod(A)                # A*A'
 (AcI <- Ac + diag(1, nrow(A)))     # A*A' + I
-Ls <- getME(fmc, "L")              # Cholesky factor L_Z (13.38)
-as(Ls, "sparseMatrix")
 PP <- P %*% AcI %*% t(P)           # P*(A*A' + I)*P'
 L <- as(Ls, "sparseMatrix")
 print(L)
@@ -84,5 +84,5 @@ max(abs(tcrossprod(L) - PP))       # L_Z*L_Z' = P*(A*A' + I)*P': (13.38)
 
 ### sessionInfo
 sessionInfo()                      # Before detaching packages
-detach(package:lme4.0) 
+detach(package:lme4) 
 

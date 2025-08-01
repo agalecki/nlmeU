@@ -75,8 +75,7 @@ names(rnf)
 length(plx <- plot(rnf))        # Two Q-Q plots saved. 
 plx[1]                          # Fig. 19.1a 
 plx[2]                          # Fig. 19.1b  
-plot(coef(fm19.2mer))           # Fig. 19.2
-
+# plot(coef(fm19.2mer))         # Fig. 19.2 (does not work)
 
 ###################################################
 ### code chunk: R19.6a
@@ -89,7 +88,7 @@ dpx[2]                        # Fig. 19.3a
 ###################################################
 ### code chunk: R19.6b
 ###################################################
-rnf.pVar <- ranef(fm19.2mer, postVar = TRUE) # ranef.mer-class object
+rnf.pVar <- ranef(fm19.2mer, condVar = TRUE) # ranef.mer-class object
 dpx.pVar <- dotplot(rnf.pVar)
 # dpx.pVar[1]                 # Dotplot for id (not shown)
 dpx.pVar[2]                   # Fig. 19.3b

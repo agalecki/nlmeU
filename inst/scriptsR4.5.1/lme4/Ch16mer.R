@@ -73,7 +73,7 @@ printCoefmat(tTable, P.values = TRUE, has.Pvalue = TRUE)
 ddf1 <- ddf[-1]                          # ddf for intercept omitted
 within(dtaov,
       {
-       `Pr(>F)` <- pf(`F value`, Df, ddf1, lower.tail = FALSE)
+       `Pr(>F)` <- pf(`F value`, npar, ddf1, lower.tail = FALSE)
        denDf <- ddf1
        })
 
@@ -91,7 +91,7 @@ SimD1summ <- apply(simD1,
   function(y){
     auxFit <- refit(merObject, y)     # Refit M16.1 with new y
     summ <- summary(auxFit)           # Summary
-    beta <- fixef(summ)               # beta
+    beta <- coef(summ)[, "Estimate"]  # beta
     Sx <- getME(auxFit, "theta")      # S element
     sgma <- sigma(auxFit)     
     list(beta = beta, ST = Sx, sigma = sgma)
@@ -146,7 +146,7 @@ parSimD1t <-                                 # Transposed
 parSimD1s <-                                 # Subset
     subset(parSimD1t, select = -`(Intercept)`) # Intercept omitted
 require(reshape)                             # melt function needed
-densityplot(~value | variable,               # Fig. 16.13
+lattice::densityplot(~value | variable,               # Fig. 16.13
             data = melt(parSimD1s),          # Molten data 
             scales = list(relation = "free"), 
             plot.points = FALSE) 
