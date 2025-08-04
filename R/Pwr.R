@@ -40,7 +40,7 @@ Pwr <- function(object, ...) UseMethod("Pwr")
 #'   of the coefficients in the model that should be tested to be zero. See
 #'   \code{\link[nlme:anova.lme]{anova.lme}} in the \code{nlme} package for details.
 #' @param verbose logical. If \code{TRUE}, additional information is provided. See \code{\link[nlme:anova.lme]{anova.lme}} in the \code{nlme} package for details.
-#' @param sigma numeric scalar value.
+#' @param sigma numeric scalar value. Rarely needed. By default scale parametr sigma is extracted from the model object.
 #' @param ddf numeric scalar value. Redefines the default number of denominator degrees of freedom.
 #' @param alpha numeric scalar value. By default, \code{0.05}.
 #' @param altB matrix or vector containing alternative values for beta parameters.

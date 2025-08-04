@@ -114,8 +114,8 @@ xyplot(mA ~ time,                          # Fig. 20.5
 ### code chunk: R20.16a
 ###################################################
 D0 <- diag(c(100, 0.09))                 # calligraphic D     
-sgma  <- 5                               # sigma
-(D  <- D0/(sgma*sgma))                   # D
+sgma  <- 5                               # fixed sigma
+D  <- D0/(sgma*sgma))                    # D
 (pd1 <- pdDiag(D, form = ~time, data = armd))
 (vF <- varPower(form = ~time, fixed = 0.15))
 
@@ -125,7 +125,8 @@ sgma  <- 5                               # sigma
 ###################################################
 cntrl <- 
    lmeControl(maxIter = 0, msMaxIter = 0, niterEM = 0, 
-              returnObject = TRUE, opt = "optim")
+              returnObject = TRUE, opt = "optim",
+              sigma = sgma)               # Fixed sigma  
 
 fmA <- 
    lme(mA ~ time + treat.f,
@@ -134,13 +135,13 @@ fmA <-
        data = exmpDt,
        control = cntrl)
 fixef(fmA)                               # beta verified
-sigma(fmA)                               # sigma approx. 0
+sigma(fmA)                               # sigma
 
 
 ###################################################
 ### code chunk: R20.17a
 ###################################################
-Pwr(fmA, sigma = sgma, L = c("treat.fActive" = 1))
+Pwr(fmA, L = c("treat.fActive" = 1))     # sigma extracted from fmA
 
 
 ###################################################
@@ -186,7 +187,7 @@ simfmA[[1]]                                       # First ANOVA
 FstatE <-                     # Empirical F-test statistics under HA 
    sapply(simfmA, function(x) x["treat.f", "F-value"])
 summary(FstatE)
-Fcrit <- qf(1- 0.05, 1, 38, ncp =0)
+Fcrit <- qf(1- 0.05, 1, 38, ncp = 0)
 (nsim <- length(FstatE))
 (powerE <- sum(FstatE > Fcrit)/nsim)             # Empirical power
 
