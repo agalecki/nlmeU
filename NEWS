@@ -1,3 +1,11 @@
+August 2025:
+
+* R scripts used in the book are available in `./scriptsR4.5.1` subfolder. scripts are
+now compatible with `lme4` package, instead of 'lme4.0'
+* Data stored in CSV format are available in  `./csvData` subfolder.
+* `nlmeUpdK` a companion package
+
+
 August 2013:
 
 1. nlmeU package (under development) contains datasets, scripts and utility functions enhancing functionality of nlme
