@@ -25,7 +25,7 @@ Type 'q()' to quit R.
 > 
 > options(width = 65, digits = 5, show.signif.stars = FALSE)
 > date()
-[1] "Fri Jul 25 17:10:12 2025"
+[1] "Mon Aug  4 21:00:40 2025"
 > packageVersion("nlmeU")
 [1] '0.75.0'
 > packageVersion("nlme")
@@ -276,4 +276,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-  32.26    2.46   53.29 
+  34.78    2.56   51.73 

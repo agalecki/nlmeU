@@ -25,7 +25,7 @@ Type 'q()' to quit R.
 > ###################################################
 > options(digits=5, show.signif.stars = FALSE)
 > date()
-[1] "Fri Jul 25 14:27:56 2025"
+[1] "Mon Aug  4 20:08:04 2025"
 > sessionInfo()
 R version 4.5.1 (2025-06-13 ucrt)
 Platform: x86_64-w64-mingw32/x64
@@ -322,4 +322,4 @@ $treat.f
 > 
 > proc.time()
    user  system elapsed 
-   0.09    0.10    0.31 
+   0.06    0.06    0.28 

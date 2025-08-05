@@ -64,7 +64,8 @@ missPat <- function(..., symbols = c("X", "-"), collapse = "", missData = FALSE)
 #' @examples
 #' runScript()
 runScript <- function(script = NA, package = "nlmeU", subdir = "scriptsR4.5.1", echo = TRUE) {
-  scriptsDir <- system.file(subdir, package = package)
+  pkgDir <- find.package(package)
+  scriptsDir <- system.file(pkgDir, subdir)
   scriptsList <- list.files(scriptsDir, pattern = "[[:alnum:]][.][R]$")
   scriptFile <- file.path(scriptsDir, script)
   if (!(script %in% scriptsList)) {

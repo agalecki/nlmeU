@@ -24,7 +24,7 @@ Type 'q()' to quit R.
 > ###################################################
 > options(width = 65, digits = 5, show.signif.stars = FALSE)
 > date()
-[1] "Sat Jul 26 08:56:03 2025"
+[1] "Mon Aug  4 21:14:18 2025"
 > packageVersion("nlmeU")
 [1] '0.75.0'
 > packageVersion("lme4")
@@ -55,7 +55,12 @@ attached base packages:
 [7] base     
 
 loaded via a namespace (and not attached):
-[1] compiler_4.5.1
+ [1] compiler_4.5.1   minqa_1.2.8      MASS_7.3-61     
+ [4] Matrix_1.7-1     reformulas_0.4.0 tools_4.5.1     
+ [7] Rcpp_1.1.0       splines_4.5.1    nlme_3.1-166    
+[10] grid_4.5.1       rbibutils_2.3    nloptr_2.1.1    
+[13] boot_1.3-31      lme4_1.1-37      Rdpack_2.6.2    
+[16] lattice_0.22-6  
 >   
 > require(lattice) 
 Loading required package: lattice
@@ -222,7 +227,7 @@ other attached packages:
 [1] lme4_1.1-37    Matrix_1.7-1   lattice_0.22-6
 
 loaded via a namespace (and not attached):
- [1] minqa_1.2.8      MASS_7.3-61      compiler_4.5.1  
+ [1] compiler_4.5.1   minqa_1.2.8      MASS_7.3-61     
  [4] reformulas_0.4.0 tools_4.5.1      Rcpp_1.1.0      
  [7] splines_4.5.1    nlme_3.1-166     grid_4.5.1      
 [10] rbibutils_2.3    nloptr_2.1.1     boot_1.3-31     
@@ -232,4 +237,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   0.96    0.20    1.61 
+   1.06    0.28    1.79 

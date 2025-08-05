@@ -24,7 +24,7 @@ Type 'q()' to quit R.
 > ###################################################
 > options(width = 65, digits = 5, show.signif.stars = FALSE)
 > date()
-[1] "Fri Jul 25 17:07:46 2025"
+[1] "Mon Aug  4 20:55:57 2025"
 > packageVersion("nlmeU")
 [1] '0.75.0'
 > packageVersion("nlme")
@@ -136,7 +136,7 @@ Number of Groups:
 > ###################################################
 > getGroupsFormula(fm18.1)                 # Grouping formula
 ~schoolid/classid
-<environment: 0x000001f0bd70c378>
+<environment: 0x000002a5f3936ff0>
 > str(grpF1 <- getGroups(fm18.1, level=1)) # Grouping factor at level 1 of the data hierarchy
  Factor w/ 107 levels "1","2","3","4",..: 1 1 1 1 1 1 1 1 1 1 ...
  - attr(*, "label")= chr "schoolid"
@@ -747,4 +747,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   1.70    0.17    3.07 
+   1.35    0.17    2.39 

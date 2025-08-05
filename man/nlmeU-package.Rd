@@ -14,6 +14,13 @@ including functions like \code{\link{logLik1}}, \code{\link{Pwr}}, and \code{\li
 It also includes datasets such as \code{\link{armd}}, \code{\link{armd0}}, \code{\link{armd.wide}},
 \code{\link{fcat}}, \code{\link{prt.fiber}}, \code{\link{prt}}, \code{\link{prt.subjects}}, and \code{\link{SIIdata}}.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/agalecki/nlmeU}
+}
+
+}
 \author{
 \strong{Maintainer}: Andrzej Galecki \email{agalecki@umich.edu} (\href{https://orcid.org/0000-0003-3058-1312}{ORCID})
 

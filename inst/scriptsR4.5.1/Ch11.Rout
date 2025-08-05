@@ -24,7 +24,7 @@ Type 'q()' to quit R.
 > ###################################################
 > options(width = 65, digits = 5, show.signif.stars = FALSE)
 > date()
-[1] "Fri Jul 25 14:30:53 2025"
+[1] "Mon Aug  4 20:09:05 2025"
 > packageVersion("nlme")
 [1] '3.1.166'
 > packageVersion("lattice")
@@ -349,4 +349,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   0.25    0.09    0.62 
+   0.25    0.03    0.51 

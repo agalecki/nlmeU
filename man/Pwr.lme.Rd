@@ -36,7 +36,7 @@ of the coefficients in the model that should be tested to be zero. See
 
 \item{verbose}{logical. If \code{TRUE}, additional information is provided. See \code{\link[nlme:anova.lme]{anova.lme}} in the \code{nlme} package for details.}
 
-\item{sigma}{numeric scalar value.}
+\item{sigma}{numeric scalar value. Rarely needed. By default scale parametr sigma is extracted from the model object.}
 
 \item{ddf}{numeric scalar value. Redefines the default number of denominator degrees of freedom.}
 

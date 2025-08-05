@@ -17,8 +17,6 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-[Previously saved workspace restored]
-
 > ##  NOTE: This code pertains to panels R15.1 - R15.4
 > 
 > ###################################################
@@ -26,7 +24,7 @@ Type 'q()' to quit R.
 > ###################################################
 > options(width=65, digits=5,show.signif.stars = FALSE)   
 > date()
-[1] "Sat Jul 26 08:55:14 2025"
+[1] "Mon Aug  4 21:12:35 2025"
 > packageVersion("Matrix")
 [1] '1.7.1'
 > sessionInfo()
@@ -215,4 +213,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   0.57    0.09    0.96 
+   0.59    0.12    1.01 

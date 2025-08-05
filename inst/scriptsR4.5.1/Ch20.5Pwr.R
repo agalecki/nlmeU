@@ -115,7 +115,7 @@ xyplot(mA ~ time,                          # Fig. 20.5
 ###################################################
 D0 <- diag(c(100, 0.09))                 # calligraphic D     
 sgma  <- 5                               # fixed sigma
-D  <- D0/(sgma*sgma))                    # D
+D  <- D0/(sgma*sgma)                     # D
 (pd1 <- pdDiag(D, form = ~time, data = armd))
 (vF <- varPower(form = ~time, fixed = 0.15))
 

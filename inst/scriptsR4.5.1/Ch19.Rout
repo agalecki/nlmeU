@@ -80,7 +80,7 @@ loaded via a namespace (and not attached):
 +           one2 = pdIdent(~id - 1)),
 +           data = fcat1))
    user  system elapsed 
-  41.56    1.24   62.73 
+  45.25    0.54   65.25 
 > fm19.2                                          # M19.2: (19.2)
 Linear mixed-effects model fit by REML
   Data: fcat1 
@@ -1501,4 +1501,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
- 126.14    3.82  172.50 
+ 108.20    2.42  181.57 

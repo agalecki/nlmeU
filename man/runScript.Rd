@@ -7,7 +7,7 @@
 runScript(
   script = NA,
   package = "nlmeU",
-  subdir = "scriptsR2.15.0",
+  subdir = "scriptsR4.5.1",
   echo = TRUE
 )
 }

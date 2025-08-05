@@ -1,6 +1,6 @@
 August 2025:
 
-* R scripts used in the book are available in `./scriptsR4.5.1` subfolder. scripts are
+* R scripts used in the book are available in `./scriptsR4.5.1` subfolder. Scripts are
 now compatible with `lme4` package, instead of 'lme4.0'
 * Data stored in CSV format are available in  `./csvData` subfolder.
 * `nlmeUpdK` a companion package

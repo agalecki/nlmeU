@@ -20,7 +20,7 @@ Type 'q()' to quit R.
 [Previously saved workspace restored]
 
 > date()
-[1] "Fri Jul 25 18:19:53 2025"
+[1] "Mon Aug  4 20:55:19 2025"
 > packageVersion("nlmeU")
 [1] '0.75.0'
 > message("Code for first part of Chapter 17 (from Panel R17.1 til R17.13) is executed below.") 
@@ -77,7 +77,7 @@ loaded via a namespace (and not attached):
 > ###################################################
 > getGroupsFormula(fm17.1)
 ~id
-<environment: 0x000001b6b9971928>
+<environment: 0x000001d391d0f3a8>
 > str(grpF <- getGroups(fm17.1))
  Factor w/ 63 levels "5","10","15",..: 1 1 1 1 1 1 1 1 1 1 ...
  - attr(*, "label")= chr "id"
@@ -614,4 +614,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-  16.14    0.32   23.89 
+  14.45    0.25   21.34 

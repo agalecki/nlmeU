@@ -17,13 +17,15 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
+[Previously saved workspace restored]
+
 > 
 > ###################################################
 > ### code chunk: Ch01init
 > ###################################################
 > options(width=65, digits=5, show.signif.stars = FALSE )
 > date()
-[1] "Fri Jul 25 14:26:11 2025"
+[1] "Mon Aug  4 17:48:38 2025"
 > packageVersion("nlmeU")
 [1] '0.75.0'
 > packageVersion("nlme")
@@ -619,4 +621,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   0.15    0.15    0.64 
+   0.17    0.10    0.50 

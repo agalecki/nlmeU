@@ -24,7 +24,7 @@ Type 'q()' to quit R.
 > ###################################################
 > options(width=65, digits=5, show.signif.stars = FALSE)   
 > date()
-[1] "Fri Jul 25 14:31:37 2025"
+[1] "Mon Aug  4 20:09:32 2025"
 > packageVersion("nlmeU")
 [1] '0.75.0'
 > packageVersion("nlme")
@@ -220,7 +220,7 @@ $g1
 
 > getGroupsFormula(reSt)           # Model hierarchy
 ~g1/g2
-<environment: 0x000001b1a337e3e0>
+<environment: 0x0000024435b2e308>
 > Names(reSt)                      # Row/col names for pdMat components
 $g2
 [1] "agefM" "agefO" "agefY"
@@ -359,4 +359,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   0.15    0.12    0.50 
+   0.14    0.06    0.40 

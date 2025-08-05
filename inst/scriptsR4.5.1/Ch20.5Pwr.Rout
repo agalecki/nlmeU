@@ -27,7 +27,7 @@ Type 'q()' to quit R.
 > 
 > options(width=65, digits=5,show.signif.stars = FALSE)   
 > date()
-[1] "Fri Jul 25 17:15:57 2025"
+[1] "Mon Aug  4 21:10:55 2025"
 > packageVersion("nlmeU")
 [1] '0.75.0'
 > packageVersion("nlme")
@@ -193,11 +193,8 @@ treat.f         1   231    5.5345    5.5345 0.64907
 > ### code chunk: R20.16a
 > ###################################################
 > D0 <- diag(c(100, 0.09))                 # calligraphic D     
-> sgma  <- 5                               # sigma
-> (D  <- D0/(sgma*sgma))                   # D
-     [,1]   [,2]
-[1,]    4 0.0000
-[2,]    0 0.0036
+> sgma  <- 5                               # fixed sigma
+> D  <- D0/(sgma*sgma)                     # D
 > (pd1 <- pdDiag(D, form = ~time, data = armd))
 Positive definite matrix structure of class pdDiag representing
             (Intercept)   time
@@ -214,7 +211,8 @@ power
 > ###################################################
 > cntrl <- 
 +    lmeControl(maxIter = 0, msMaxIter = 0, niterEM = 0, 
-+               returnObject = TRUE, opt = "optim")
++               returnObject = TRUE, opt = "optim",
++               sigma = sgma)               # Fixed sigma  
 > 
 > fmA <- 
 +    lme(mA ~ time + treat.f,
@@ -225,14 +223,14 @@ power
 > fixef(fmA)                               # beta verified
   (Intercept)          time treat.fActive 
          65.0          -0.1          10.0 
-> sigma(fmA)                               # sigma approx. 0
-[1] 2.8601e-14
+> sigma(fmA)                               # sigma
+[1] 5
 > 
 > 
 > ###################################################
 > ### code chunk: R20.17a
 > ###################################################
-> Pwr(fmA, sigma = sgma, L = c("treat.fActive" = 1))
+> Pwr(fmA, L = c("treat.fActive" = 1))     # sigma extracted from fmA
   numDF denDF F-value     nc   Power
 1     1    38  8.0434 8.0434 0.78925
 > 
@@ -416,9 +414,9 @@ power
 +             })
 > simfmA[[1]]                                       # First ANOVA 
             numDF denDF F-value p-value
-(Intercept)     1   119 1411.01  <.0001
-time            1   119    4.78  0.0307
-treat.f         1    38    3.38  0.0738
+(Intercept)     1   119 1541.08  <.0001
+time            1   119    5.22  0.0241
+treat.f         1    38    3.69  0.0622
 > 
 > ###################################################
 > ### code chunk: R20.19
@@ -427,12 +425,12 @@ treat.f         1    38    3.38  0.0738
 +    sapply(simfmA, function(x) x["treat.f", "F-value"])
 > summary(FstatE)
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 0.0563  4.6493  8.2418  9.2742 12.5719 38.1978 
-> Fcrit <- qf(1- 0.05, 1, 38, ncp =0)
+ 0.0625  4.5906  8.1149  9.0660 12.5221 34.6590 
+> Fcrit <- qf(1- 0.05, 1, 38, ncp = 0)
 > (nsim <- length(FstatE))
 [1] 1000
 > (powerE <- sum(FstatE > Fcrit)/nsim)             # Empirical power
-[1] 0.783
+[1] 0.784
 > 
 > ### sessionInfo
 > 
@@ -468,4 +466,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-  11.20    0.35   13.57 
+  10.65    0.40   15.76 
