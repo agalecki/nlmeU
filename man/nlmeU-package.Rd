@@ -6,7 +6,7 @@
 \alias{nlmeU-package}
 \title{nlmeU: Datasets and Utility Functions Enhancing Functionality of 'nlme' Package}
 \description{
-Provides functions and datasets to support the book by Galecki and Burzykowski (2013), 'Linear Mixed-Effects Models: A Step-by-Step Approach', Springer. Includes functions for power calculations, log-likelihood contributions, and data simulation for linear mixed-effects models.
+Provides functions and datasets to support the book by GaBecki and Burzykowski (2013), 'Linear Mixed-Effects Models: A Step-by-Step Approach', Springer. Includes functions for power calculations, log-likelihood contributions, and data simulation for linear mixed-effects models.
 }
 \details{
 This package provides datasets and utility functions to complement the \code{nlme} package,
@@ -22,7 +22,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Andrzej Galecki \email{agalecki@umich.edu} (\href{https://orcid.org/0000-0003-3058-1312}{ORCID})
+\strong{Maintainer}: Andrzej GaBecki \email{agalecki@umich.edu} (\href{https://orcid.org/0000-0003-3058-1312}{ORCID})
 
 Authors:
 \itemize{

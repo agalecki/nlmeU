@@ -3,13 +3,13 @@ Version: 0.76.42
 Title: Functions and Data Supporting
    'Linear Mixed-Effects Models: A Step-by-Step Approach'
 Description: Provides functions and datasets to support the book
-   by Galecki and Burzykowski (2013),
+   by GaBecki and Burzykowski (2013),
    'Linear Mixed-Effects Models: A Step-by-Step Approach',
    Springer. Includes functions for power calculations,
    log-likelihood contributions, and data simulation
    for linear mixed-effects models.
 Authors@R: c(
-   person("Andrzej", "Galecki", email = "agalecki@umich.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-3058-1312")),
+   person("Andrzej", "GaBecki", email = "agalecki@umich.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-3058-1312")),
    person("Tomasz", "Burzykowski", email = "tomasz.burzykowski@uhasselt.be", role = "aut", comment = c(ORCID = "0000-0003-3378-975X"))
    )
 Imports: nlme, stats
