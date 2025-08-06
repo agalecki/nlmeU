@@ -1,4 +1,5 @@
 #' nlmeU: Datasets and Utility Functions Enhancing Functionality of 'nlme' Package
+#' @description Provides functions and datasets to support the book by Galecki and Burzykowski (2013), "Linear Mixed-Effects Models Using R: A Step-by-Step Approach", Springer. Version `r packageVersion("nlmeU")`  includes functions for power calculations, log-likelihood contributions, and data simulation for linear mixed-effects models.
 #' @details
 #' This package provides datasets and utility functions to complement the \code{nlme} package,
 #' including functions like \code{\link{logLik1}}, \code{\link{Pwr}}, and \code{\link{simulateY}}.
