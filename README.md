@@ -2,9 +2,8 @@
 
 ## Installation
 
-
 ```
-devtools::install_github("agalecki/nlmeU")`
+devtools::install_github("agalecki/nlmeU")
 ```
 
 ## Scripts
