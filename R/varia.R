@@ -63,7 +63,8 @@ missPat <- function(..., symbols = c("X", "-"), collapse = "", missData = FALSE)
 #'   Galecki, A., & Burzykowski, T. (2013). *Linear Mixed-Effects Models: A Step-by-Step Approach*. Springer.
 #' @examples
 #' runScript()
-runScript <- function(script = NA, package = "nlmeU", subdir = "scriptsR4.5.1", echo = TRUE) {
+runScript <- function(script = NA, package = "nlmeU", 
+                      subdir = "scriptsR4.5.1", echo = TRUE) {
   pkgDir <- find.package(package)
   scriptsDir <- system.file(subdir, package = package)
   scriptsList <- list.files(scriptsDir, pattern = "[[:alnum:]][.][R]$")
@@ -71,18 +72,13 @@ runScript <- function(script = NA, package = "nlmeU", subdir = "scriptsR4.5.1", 
   if (!(script %in% scriptsList)) {
     if (is.na(script)) {
       errFun <- message
-      errMsg <- ""
+      errMsg <- paste("Scripts in ", scriptsDir, " are: \n", paste("\"", scriptsList, 
+                                                                collapse = "\", \n", sep = ""), "\"")
     } else {
       errFun <- stop
-      errMsg <- paste("Example", script, "does not exist. ")
+      errMsg <- paste("Script", script, "does not exist. ")
     }
-    errFun(errMsg, "Scripts in ", scriptsDir, " are: \n", paste("\"", scriptsList, 
-                                                                collapse = "\", \n", sep = ""), "\"")
-    if (subdir == "scriptsR4.5.1")
-      cat('\n Scripts employing lme4 package are stored in: \n',
-          file.path(scriptsDir, "lme4"), ' folder',
-          ' and can be found by issuing:\n   runScript(subdir = "scriptsR4.5.1/lme4") command \n')         
-  } else {
-    source(scriptFile, echo = echo)
+    errFun(errMsg)
   }
+    if (!is.na(script)) source(scriptFile, echo = echo) else invisible()
 }
