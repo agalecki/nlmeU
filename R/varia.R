@@ -65,7 +65,7 @@ missPat <- function(..., symbols = c("X", "-"), collapse = "", missData = FALSE)
 #' runScript()
 runScript <- function(script = NA, package = "nlmeU", subdir = "scriptsR4.5.1", echo = TRUE) {
   pkgDir <- find.package(package)
-  scriptsDir <- system.file(pkgDir, subdir)
+  scriptsDir <- system.file(subdir, package = package)
   scriptsList <- list.files(scriptsDir, pattern = "[[:alnum:]][.][R]$")
   scriptFile <- file.path(scriptsDir, script)
   if (!(script %in% scriptsList)) {
@@ -83,7 +83,6 @@ runScript <- function(script = NA, package = "nlmeU", subdir = "scriptsR4.5.1", 
           file.path(scriptsDir, "lme4"), ' folder',
           ' and can be found by issuing:\n   runScript(subdir = "scriptsR4.5.1/lme4") command \n')         
   } else {
-    sourceText <- source(scriptFile, echo = echo)
-    sourceText
+    source(scriptFile, echo = echo)
   }
 }

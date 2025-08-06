@@ -15,9 +15,8 @@ Auxiliary function
 my_source <- function(file,  
                       pkg = "nlmeU", folder = "scriptsR4.5.1",
                       ...){
-  message("--- Script ", file, " in ", pkg, " package executed.")
-  pkgpath <- find.package(pkg)
-  fpath <- system.file(pkgpath, folder, file)
+  message("#>>> --- Script ", file, " in ", pkg, " package executed.")
+  fpath <- system.file(folder, file, package = pkg)
   source(fpath, echo = TRUE, ...)
 }
 ```
