@@ -40,7 +40,6 @@ Pwr <- function(object, ...) UseMethod("Pwr")
 #'   of the coefficients in the model that should be tested to be zero. See
 #'   \code{\link[nlme:anova.lme]{anova.lme}} in the \code{nlme} package for details.
 #' @param verbose logical. If \code{TRUE}, additional information is provided. See \code{\link[nlme:anova.lme]{anova.lme}} in the \code{nlme} package for details.
-#' @param sigma numeric scalar value. Rarely needed. By default scale parametr sigma is extracted from the model object.
 #' @param ddf numeric scalar value. Redefines the default number of denominator degrees of freedom.
 #' @param alpha numeric scalar value. By default, \code{0.05}.
 #' @param altB matrix or vector containing alternative values for beta parameters.
@@ -52,7 +51,7 @@ Pwr <- function(object, ...) UseMethod("Pwr")
 #' @seealso \code{\link[nlme:anova.lme]{anova.lme}}
 Pwr.lme <- function(object, ...,
                     type = c("sequential", "marginal"), 
-                    Terms, L, verbose = FALSE, sigma, ddf = numeric(0), alpha = 0.05,
+                    Terms, L, verbose = FALSE, ddf = numeric(0), alpha = 0.05,
                     altB = NULL, tol = 1e-10) {
   ## Arguments: 
   ##  1. object: one object only
@@ -72,7 +71,9 @@ Pwr.lme <- function(object, ...,
   Lx <- !Tmiss || !Lmiss     # Contrasts matrix L can be created 
   fixefs <- object$coefficients$fixed
   fixefNms <- names(fixefs)
-  if (!Lx && !missing(sigma)) stop("L or Terms arguments need to be specified with non-missing sigma argument") 
+  sgma <- stats::sigma(object)
+  #if (!Lx && !missing(sigma)) stop("L or Terms arguments need to be specified with non-missing sigma argument") 
+  # if (!Lx ) stop("L or Terms arguments need to be specified with non-missing sigma") 
   
   .traceR(10) 
   if (!Tmiss && Lmiss) {          # IF 1  (Check this part)
@@ -88,7 +89,7 @@ Pwr.lme <- function(object, ...,
     cLnms <- NULL
   }
 
-  if (!missing(sigma)) object <- sigmaTolme(object, value = sigma) # Internal function call
+  # if (!missing(sigma)) object <- sigmaTolme(object, value = sigma) # Internal function call
 
   x <- nlme::anova.lme(object, adjustSigma = FALSE,
                        test = TRUE, type = type, L = L, verbose = verbose)  # ANOVA results stored in x 

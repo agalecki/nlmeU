@@ -111,33 +111,3 @@ simulateY.lme <- function(object, nsim = 1, seed = as.integer(runif(1, 0, .Machi
   .traceR(1, lbl = "simulateY.lme ENDS->")
   return(resAll + fitd0)
 }
-
-## -> sigmaTolme function
-#' Adjusts the scale parameter of an \code{lme} object
-#'
-#' Adjusts the scale parameter (\code{sigma}) of an \code{\link[nlme:lme]{lme}} object
-#' and rescales variance-related components accordingly. This function is intended
-#' for use with \code{\link{Pwr.lme}}. **Warning**: This function modifies the
-#' \code{lme} object and should be used cautiously to avoid corrupting the model.
-#'
-#' @param object an \code{\link[nlme:lme]{lme}} object.
-#' @param value numeric scalar specifying the new scale parameter value.
-#' @return The modified \code{\link[nlme:lme]{lme}} object with rescaled \code{sigma} and variance components.
-#' @author Andrzej Galecki and Tomasz Burzykowski
-#' @keywords internal
-#' @importFrom stats vcov
-sigmaTolme <- function(object, value) { 
-  .functionName <- "sigmaTolme"
-  .traceR <- if (is.null(options()$traceR)) function(...){} else options()$.traceR 
-
-  .traceR(1, lbl = "-> sigmaTolme STARTS")
-  sigma0 <- object$sigma 
-  val <- value * value
-  sc <- sqrt(val) / sigma0  
-  object$sigma <- sqrt(val)
-  attr(object$fixDF, "varFixFact") <- sc * attr(object$fixDF, "varFixFact") # Rescaled for anova.lme
-  .traceR(5, vcov(object) * sc * sc, .functionName)
-  object$varFix <- object$varFix * sc * sc  # vcov rescaled  
-  .traceR(1, lbl = "sigmaTolme ENDS <-")
-  object
-}

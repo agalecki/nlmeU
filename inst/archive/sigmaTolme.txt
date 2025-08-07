@@ -1,0 +1,26 @@
+
+#' Adjust Scale Parameter of an lme Object
+#' 
+#' Adjusts the scale parameter of an \code{\link[nlme]{lme}} object, modifying its variance components.
+#' 
+#' @param object An \code{\link[nlme]{lme}} object.
+#' @param value Numeric scalar for the new scale parameter.
+#' @return The modified \code{\link[nlme]{lme}} object with rescaled scale parameter and variance components.
+#' @export
+#' @name sigmaTolme
+
+sigmaTolme <- function(object, value) { 
+  .functionName <- "sigmaTolme"
+  .traceR <- if (is.null(options()$traceR)) function(...){} else options()$.traceR 
+
+  .traceR(1, lbl = "-> sigmaTolme STARTS")
+  sigma0 <- object$sigma 
+  val <- value * value
+  sc <- sqrt(val) / sigma0  
+  object$sigma <- sqrt(val)
+  attr(object$fixDF, "varFixFact") <- sc * attr(object$fixDF, "varFixFact") # Rescaled for anova.lme
+  .traceR(5, vcov(object) * sc * sc, .functionName)
+  object$varFix <- object$varFix * sc * sc  # vcov rescaled  
+  .traceR(1, lbl = "sigmaTolme ENDS <-")
+  object
+}
