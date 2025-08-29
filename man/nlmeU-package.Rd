@@ -22,7 +22,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Andrzej Galecki \email{agalecki@umich.edu} (\href{https://orcid.org/0000-0003-3058-1312}{ORCID})
+\strong{Maintainer}: Andrzej T. Galecki \email{agalecki@umich.edu} (\href{https://orcid.org/0000-0003-1542-4001}{ORCID})
 
 Authors:
 \itemize{
